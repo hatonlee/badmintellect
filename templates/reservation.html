@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ reservation.title }}</title>
+</head>
+
+<body>
+    <!-- title -->
+    <h1>{{ reservation.title }}</h1>
+
+    <!-- info -->
+    <p>Start time: {{ reservation.start_time }} </p>
+    <p>End time: {{ reservation.end_time }} </p>
+    <p>Place: {{ reservation.place }} </p>
+
+    <!-- edit -->
+    {% if reservation.user_id == session.user_id %}
+    <p>
+        <a href="/edit/{{ reservation.id }}">Edit</a> |
+        <a href="/remove/{{ reservation.id }}">Remove</a>
+    </p>
+    {% endif %}
+
+    <!-- front page -->
+    <p>
+        <a href="/">Front page</a>
+    </p>
+  </body>
+</html>

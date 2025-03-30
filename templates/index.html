@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>badmintellect</title>
+</head>
+<body>
+    <!-- title -->
+    <h1>Reservations</h1>
+
+    <!-- account management -->
+    <p>
+        <a href="/register">Sign Up</a> |
+        {% if session.user_id %}
+        <a href="/logout">Log Out</a>
+        {% else %}
+        <a href="/login">Sign In</a>
+        {% endif %}
+    </p>
+
+    <!-- list of all reservations -->
+    {% for reservation in reservations %}
+    <p>
+        <a href="/reservation/{{ reservation.id }}"> {{ reservation.title }} </a>
+    </p>
+    {% endfor %}
+
+    <!-- add new reservation -->
+    {% if session.user_id %}
+    <h2>New reservation</h2>
+    <form action="/new_reservation" method="post">
+        <p>
+            <label for="title">Title</label>
+            <input type="text" name="title"/>
+        </p>
+        <p>
+            <label for="start_time">Start time</label>
+            <input type="text" name="start_time"/>
+        </p>
+        <p>
+            <label for="end_time">End time</label>
+            <input type="text" name="end_time"/>
+        </p>
+        <p>
+            <label for="place">Place</label>
+            <input type="text" name="place"/>
+        </p>
+        <input type="submit" value="Submit" />
+    </form>
+    {% endif %}
+</body>
+</html>

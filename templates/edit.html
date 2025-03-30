@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit reservation</title>
+</head>
+<body>
+    <!-- title -->
+    <h1>Edit reservation</h1>
+
+    <!-- edit -->
+    <form action="/edit/{{ reservation.id }}" method="post">
+        <p>
+            <label for="title">Title</label>
+            <input type="text" name="title"/>
+        </p>
+        <p>
+            <label for="start_time">Start time</label>
+            <input type="text" name="start_time"/>
+        </p>
+        <p>
+            <label for="end_time">End time</label>
+            <input type="text" name="end_time"/>
+        </p>
+        <p>
+            <label for="place">Place</label>
+            <input type="text" name="place"/>
+        </p>
+        <input type="submit" value="Submit" />
+    </form>
+  </body>
+</html>
