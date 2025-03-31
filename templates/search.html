@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search "{{ query }}"</title>
+</head>
+<body>
+    <!-- title -->
+    <h1> Search " {{ query }} "</h1>
+
+    <!-- search results -->
+    {% for reservation in reservations %}
+    <p>
+        <a href="/reservation/{{ reservation.id }}"> {{ reservation.title }} </a>
+    </p>
+    {% endfor %}
+
+    <!-- front page -->
+    <p>
+        <a href="/">Front page</a>
+    </p>
+</body>
+</html>

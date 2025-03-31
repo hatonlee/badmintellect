@@ -1,12 +1,12 @@
 import db
 
-# get a list of all the reservations and their details
-def get_reservations():
-    sql = """SELECT r.id, r.title, r.start_time, r.end_time, r.place
-             FROM reservations r
-             GROUP BY r.id
-             ORDER BY r.id DESC"""
-    return db.query(sql)
+# get a list of all the matching reservations and their details
+def get_reservations(r_id="%", r_title="%", r_start_time="%", r_end_time="%", r_place="%"):
+    sql = """SELECT *
+             FROM reservations
+             WHERE id LIKE ? AND title LIKE ? AND start_time LIKE ? AND end_time LIKE ? AND place LIKE ?
+             ORDER BY id DESC"""
+    return db.query(sql, [r_id, r_title, r_start_time, r_end_time, r_place])
 
 # get the details of a reservation
 def get_reservation(reservation_id):

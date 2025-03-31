@@ -1,7 +1,7 @@
 import sqlite3
 from flask import Flask
 from flask import redirect, render_template, request, session
-import res_handler, users, config
+import res_handler, usr_handler, config
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -104,3 +104,11 @@ def login():
 def logout():
     del session["user_id"]
     return redirect("/")
+
+# search
+@app.route("/search", methods=["POST"])
+def search():
+    query = request.form["query"]
+    query_match_all = f"%{query}%"
+    reservations = res_handler.get_reservations(r_title=query_match_all)
+    return render_template("search.html", query=query, reservations=reservations)

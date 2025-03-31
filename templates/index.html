@@ -19,6 +19,15 @@
         {% endif %}
     </p>
 
+    <!-- search -->
+    <form action="/search" method="post">
+        <p>
+            <label for="query">Search...</label>
+            <input type="text" name="query"/>
+        </p>
+        <input type="submit" value="Submit"/>
+    </form>
+
     <!-- list of all reservations -->
     {% for reservation in reservations %}
     <p>
@@ -46,7 +55,7 @@
             <label for="place">Place</label>
             <input type="text" name="place"/>
         </p>
-        <input type="submit" value="Submit" />
+        <input type="submit" value="Submit"/>
     </form>
     {% endif %}
 </body>
