@@ -10,8 +10,12 @@
 * Käyttäjä pystyy merkitsemään itsensä muiden varauksiin.
 
 ## Sovelluksen käyttäminen
-1. Luo tietokanta \
-`sqlite3 database.db < schema.sql`
+1. Luo tietokanta
+```
+sqlite3 database.db < schema.sql
+```
 
-2. Käynnistä palvelin \
-`flask run`
+2. Käynnistä palvelin 
+```
+flask run
+```
