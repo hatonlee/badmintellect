@@ -17,9 +17,9 @@ CREATE TABLE tags (
     id INTEGER PRIMARY KEY,
     tag TEXT,
     reservation_id INTEGER REFERENCES reservations
-)
+);
 
 CREATE TABLE allowed_tags (
     id INTEGER PRIMARY KEY,
-    tag TEXT
-)
+    tag TEXT UNIQUE
+);
