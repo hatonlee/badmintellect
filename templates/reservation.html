@@ -15,6 +15,14 @@
     <p>End time: {{ reservation.end_time }} </p>
     <p>Place: {{ reservation.place }} </p>
 
+    <!-- tags -->
+    <p>
+        Tags: 
+        {% for tag in tags %}
+            {{tag["tag"]}}
+        {% endfor %}
+    </p>
+
     <!-- edit -->
     {% if reservation.user_id == session.user_id %}
     <p>

@@ -9,7 +9,9 @@
     <!-- Title -->
     <h1>Create a new reservation</h1>
 
+    <!-- Form -->
     <form action="/new-reservation" method="post">
+        <!-- Required info -->
         <p>
             <label for="title">Title</label>
             <input type="text" name="title"/>
@@ -26,6 +28,20 @@
             <label for="place">Place</label>
             <input type="text" name="place"/>
         </p>
+
+        <!-- Tags -->
+        <h2>Tags</h2>
+        {% if not allowed_tags %}
+        <p>Unfortunately there are no tags available</p>
+        {% else %}
+        <p>
+            {% for tag in allowed_tags %}
+            <input type="checkbox" name="tag" value="{{ tag[0] }}">
+            <label for="tag">{{ tag[0] }}</label>
+            {% endfor %}
+        </p>
+        {% endif %}
+
         <input type="submit" value="Submit"/>
     </form>
 </body>

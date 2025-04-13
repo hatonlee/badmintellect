@@ -13,20 +13,33 @@
     <form action="/edit/{{ reservation.id }}" method="post">
         <p>
             <label for="title">Title</label>
-            <input type="text" name="title"/>
+            <input type="text" name="title" value="{{ reservation.title }}"/>
         </p>
         <p>
             <label for="start_time">Start time</label>
-            <input type="text" name="start_time"/>
+            <input type="text" name="start_time" value="{{ reservation.start_time }}"/>
         </p>
         <p>
             <label for="end_time">End time</label>
-            <input type="text" name="end_time"/>
+            <input type="text" name="end_time" value="{{ reservation.end_time }}"/>
         </p>
         <p>
             <label for="place">Place</label>
-            <input type="text" name="place"/>
+            <input type="text" name="place" value="{{ reservation.place }}"/>
         </p>
+
+        <!-- Tags -->
+        <h2>Tags</h2>
+        {% if not allowed_tags %}
+        <p>Unfortunately there are no tags available</p>
+        {% else %}
+        <p>
+            {% for allowed_tag in allowed_tags %}
+            <input type="checkbox" name="tag" value="{{ allowed_tag[0] }}" {% if allowed_tag in tags %} checked {% endif %}>
+            <label for="tag">{{ allowed_tag[0] }}</label>
+            {% endfor %}
+        </p>
+        {% endif %}
         <input type="submit" value="Submit" />
     </form>
   </body>
