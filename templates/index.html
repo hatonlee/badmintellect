@@ -7,33 +7,39 @@
 </head>
 <body>
     <!-- title -->
-    <h1>Reservations</h1>
+    <h1>badmintellect</h1>
 
     <!-- account management -->
     <p>
-        <a href="/register">Sign Up</a> |
         {% if session.user_id %}
         <a href="/logout">Log Out</a>
         {% else %}
+        <a href="/register">Sign Up</a> |
         <a href="/login">Sign In</a>
         {% endif %}
     </p>
+    
+    <h2>Reservations</h2>
 
     <!-- search -->
     <form action="/search" method="post">
         <p>
             <label for="query">Search...</label>
             <input type="text" name="query"/>
+            <input type="submit" value="Submit"/>
         </p>
-        <input type="submit" value="Submit"/>
     </form>
 
     <!-- list of all reservations -->
-    {% for reservation in reservations %}
-    <p>
-        <a href="/reservation/{{ reservation.id }}"> {{ reservation.title }} </a>
-    </p>
-    {% endfor %}
+    {% if not reservations %}
+    <p>The are no reservations at the moment :(</p>
+    {% else %}
+        {% for reservation in reservations %}
+        <p>
+            <a href="/reservation/{{ reservation.id }}"> {{ reservation.title }} </a>
+        </p>
+        {% endfor %}
+    {% endif %}
 
     <!-- add new reservation -->
     {% if session.user_id %}
