@@ -16,16 +16,21 @@ def index():
 @app.route("/reservation/<int:reservation_id>")
 def show_reservation(reservation_id):
     reservation = res_handler.get_reservations(r_id=reservation_id)
+    reservation = reservation[0]
     return render_template("reservation.html", reservation=reservation)
 
 # new reservation
-@app.route("/new_reservation", methods=["POST"])
+@app.route("/new-reservation", methods=["GET", "POST"])
 def new_reservation():
-    title = request.form["title"]
-    start_time = request.form["start_time"]
-    end_time = request.form["end_time"]
-    place = request.form["place"]
-    user_id = session["user_id"]
+    if request.method == "GET":
+        return render_template("new-reservation.html")
+
+    if request.method == "POST":
+        title = request.form["title"]
+        start_time = request.form["start_time"]
+        end_time = request.form["end_time"]
+        place = request.form["place"]
+        user_id = session["user_id"]
 
     reservation_id = res_handler.add_reservation(title, start_time, end_time, place, user_id)
     return redirect("/reservation/" + str(reservation_id))
@@ -33,7 +38,7 @@ def new_reservation():
 # edit reservation
 @app.route("/edit/<int:reservation_id>", methods=["GET", "POST"])
 def edit_reservation(reservation_id):
-    reservation = res_handler.get_reservations(r_id=reservation_id)
+    reservation = res_handler.get_reservations(r_id=reservation_id)[0]
 
     if request.method == "GET":
         return render_template("edit.html", reservation=reservation)
@@ -49,7 +54,7 @@ def edit_reservation(reservation_id):
 # remove reservation
 @app.route("/remove/<int:reservation_id>", methods=["GET", "POST"])
 def remove_reservation(reservation_id):
-    reservation = res_handler.get_reservations(r_id=reservation_id)
+    reservation = res_handler.get_reservations(r_id=reservation_id)[0]
 
     if request.method == "GET":
         return render_template("remove.html", reservation=reservation)
