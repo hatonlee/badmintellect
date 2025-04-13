@@ -8,11 +8,6 @@ def get_reservations(r_id="%", r_title="%", r_start_time="%", r_end_time="%", r_
              ORDER BY id DESC"""
     return db.query(sql, [r_id, r_title, r_start_time, r_end_time, r_place])
 
-# get the details of a reservation
-def get_reservation(reservation_id):
-    sql = "SELECT * FROM reservations WHERE id = ?"
-    return db.query(sql, [reservation_id])[0]
-
 # add a new reservation into the database
 def add_reservation(title, start_time, end_time, place, user_id):
     sql = "INSERT INTO reservations (title, start_time, end_time, place, user_id) VALUES (?, ?, ?, ?, ?)"

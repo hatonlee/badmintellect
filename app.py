@@ -15,7 +15,7 @@ def index():
 # show a reservation
 @app.route("/reservation/<int:reservation_id>")
 def show_reservation(reservation_id):
-    reservation = res_handler.get_reservation(reservation_id)
+    reservation = res_handler.get_reservations(r_id=reservation_id)
     return render_template("reservation.html", reservation=reservation)
 
 # new reservation
@@ -33,7 +33,7 @@ def new_reservation():
 # edit reservation
 @app.route("/edit/<int:reservation_id>", methods=["GET", "POST"])
 def edit_reservation(reservation_id):
-    reservation = res_handler.get_reservation(reservation_id)
+    reservation = res_handler.get_reservations(r_id=reservation_id)
 
     if request.method == "GET":
         return render_template("edit.html", reservation=reservation)
@@ -49,7 +49,7 @@ def edit_reservation(reservation_id):
 # remove reservation
 @app.route("/remove/<int:reservation_id>", methods=["GET", "POST"])
 def remove_reservation(reservation_id):
-    reservation = res_handler.get_reservation(reservation_id)
+    reservation = res_handler.get_reservations(r_id=reservation_id)
 
     if request.method == "GET":
         return render_template("remove.html", reservation=reservation)
