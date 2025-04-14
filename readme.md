@@ -1,27 +1,26 @@
 # badmintellect
 
-## Sovelluksen ominaisuudet
-* Käyttäjä voi luoda tunnuksen ja kirjautua sisään.
-* Käyttäjä voi etsiä muiden tekemiä varauksia sekä luoda omia.
-* Käyttäjä voi muokata ilmoituksiaan.
-* Käyttäjä voi etsiä ilmoituksia nimellä.
+## Features of the application
+* Account system with login and signup
+* Ability to view and create reservations
+* Ability to modify reservations
+* Search for reservations
+* Tags for reservations
+* Commenting on reservations
 
 ## TO:DO
-* Käyttäjä voi muokata profiiliaan
-* Käyttäjä voi lisätä ilmoituksiinsa avainsanoja, kuvia sekä lisätietoja.
-* Käyttäjä voi vastaanottaa ilmoituksia tietyistä varauksista.
-* Käyttäjä voi etsiä ilmoituksia mm. ajan ja tunnisteiden perusteella.
-* Sovelluksessa on tilastosivu, joka näyttää anonyymeja tilastoja sivuston käytöstä.
-* Käyttäjä pystyy merkitsemään itsensä muiden varauksiin.
-* Varauksissa on keskustelukenttä.
+* More sophisticated user profile including a description and a profile picture.
+* Search by tags and other filters
+* Statistics page
+* Ability to join a reservation.
 
-## Sovelluksen käyttäminen
-1. Luo tietokanta
+## Using the application
+1. Initialize the database
 ```
 sqlite3 database.db < schema.sql
 ```
 
-2. Käynnistä palvelin 
+2. Start the server (development only)
 ```
 flask run
 ```
