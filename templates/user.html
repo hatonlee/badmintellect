@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User {{ username }}</title>
+</head>
+<body>
+    <h1>{{ username }}</h1>
+    
+    <!-- list of all reservations -->
+    <h2>Reservations:</h2>
+
+    {% if not reservations %}
+    <p>This user has no reservations :(</p>
+    {% else %}
+        {% for reservation in reservations %}
+        <p>
+            <a href="/reservation/{{ reservation.id }}"> {{ reservation.title }} </a>
+        </p>
+        {% endfor %}
+    {% endif %}
+</body>
+</html>

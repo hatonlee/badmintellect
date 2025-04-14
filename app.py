@@ -155,3 +155,14 @@ def search():
     query_match_all = f"%{query}%"
     reservations = res_handler.get_reservations(r_title=query_match_all)
     return render_template("search.html", query=query, reservations=reservations)
+
+# user page
+@app.route("/user/<username>")
+def user(username):
+    # get the user_id
+    user_id = usr_handler.find_user(username)[0][0]
+
+    # get reservations of the user
+    reservations = res_handler.get_reservations(r_user_id=user_id)
+
+    return render_template("user.html", username=username, reservations=reservations)
