@@ -17,10 +17,14 @@
 
     <!-- tags -->
     <p>
-        Tags: 
-        {% for tag in tags %}
-            {{tag["tag"]}}
-        {% endfor %}
+        {% if tags %}
+            Tags: 
+            {% for tag in tags %}
+                {{tag["tag"]}}
+            {% endfor %}
+        {% else %}
+            No tags
+        {% endif %}
     </p>
 
     <!-- edit -->
@@ -31,9 +35,30 @@
     </p>
     {% endif %}
 
+    <!-- comments -->
+    <h2>Comments</h2>
+    <div>
+        {% if comments %}
+            {% for comment in comments %}
+                <p>{{ comment.comment }}</p>
+            {% endfor %}
+        {% else %}
+            No comments
+        {% endif %}
+    </div>
+
+    <!-- post a comment -->
+    {% if session.user_id %}
+    <h3>Create a new comment</h3>
+    <form action="/reservation/{{ reservation.id }}", method="post">
+        <textarea name="comment" id="comment"></textarea>
+        <input type="submit" value="Post">
+    </form>
+    {% endif %}
+
     <!-- front page -->
     <p>
         <a href="/">Front page</a>
     </p>
-  </body>
+</body>
 </html>

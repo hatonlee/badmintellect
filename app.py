@@ -1,7 +1,7 @@
 import sqlite3
 from flask import Flask
 from flask import redirect, render_template, request, session
-import res_handler, usr_handler, tag_handler, config
+import res_handler, usr_handler, tag_handler, com_handler, config
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -13,11 +13,23 @@ def index():
     return render_template("index.html", reservations=reservations)
 
 # show a reservation
-@app.route("/reservation/<int:reservation_id>")
+@app.route("/reservation/<int:reservation_id>", methods=["GET", "POST"])
 def show_reservation(reservation_id):
-    reservation = res_handler.get_reservations(r_id=reservation_id)[0]
-    tags = tag_handler.get_tags(reservation_id)
-    return render_template("reservation.html", reservation=reservation, tags=tags)
+    if request.method == "GET":
+        reservation = res_handler.get_reservations(r_id=reservation_id)[0]
+        tags = tag_handler.get_tags(reservation_id)
+        comments = com_handler.get_comments(reservation_id)
+        print(comments)
+        return render_template("reservation.html", reservation=reservation, tags=tags, comments=comments)
+
+    if request.method == "POST":
+        # get form information
+        comment = request.form["comment"]
+
+        # create the comment
+        comment_id = com_handler.add_comment(comment, reservation_id)
+
+        return redirect(f"/reservation/{reservation_id}")
 
 # new reservation
 @app.route("/new-reservation", methods=["GET", "POST"])
@@ -44,7 +56,7 @@ def new_reservation():
             tag_handler.add_tag(tag, reservation_id)
         
         # redirect to the reservation
-        return redirect("/reservation/" + str(reservation_id))
+        return redirect(f"/reservation/{reservation_id}")
 
 # edit reservation
 @app.route("/edit/<int:reservation_id>", methods=["GET", "POST"])
@@ -73,7 +85,7 @@ def edit_reservation(reservation_id):
         res_handler.update_reservation(reservation["id"], new_title, new_start_time, new_end_time, new_place)
         
         # redirect to the reservation
-        return redirect(f"/reservation/{str(reservation["id"])}")
+        return redirect(f"/reservation/{reservation_id}")
 
 # remove reservation
 @app.route("/remove/<int:reservation_id>", methods=["GET", "POST"])

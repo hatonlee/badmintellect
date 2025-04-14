@@ -23,3 +23,9 @@ CREATE TABLE allowed_tags (
     id INTEGER PRIMARY KEY,
     tag TEXT UNIQUE
 );
+
+CREATE TABLE comments (
+    id INTEGER PRIMARY KEY,
+    comment TEXT,
+    reservation_id INTEGER REFERENCES reservations
+)
