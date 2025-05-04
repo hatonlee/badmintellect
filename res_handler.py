@@ -6,8 +6,7 @@ def get_reservations(r_id="%", r_title="%", r_start_time="%", r_end_time="%", r_
              FROM reservations
              WHERE id LIKE ? AND title LIKE ? AND start_time LIKE ? AND end_time LIKE ? AND place LIKE ? and user_id LIKE ?
              ORDER BY id DESC"""
-    result = db.query(sql, [r_id, r_title, r_start_time, r_end_time, r_place, r_user_id])
-    return result if result else None
+    return db.query(sql, [r_id, r_title, r_start_time, r_end_time, r_place, r_user_id])
 
 # add a new reservation into the database
 def add_reservation(title, start_time, end_time, place, user_id):
