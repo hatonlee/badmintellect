@@ -6,6 +6,10 @@ import res_handler, usr_handler, tag_handler, com_handler, config
 app = Flask(__name__)
 app.secret_key = config.secret_key
 
+def require_login():
+    if "user_id" not in session:
+        abort(403)
+
 # main page
 @app.route("/")
 def index():
@@ -15,25 +19,36 @@ def index():
 # show a reservation
 @app.route("/reservation/<int:reservation_id>", methods=["GET", "POST"])
 def show_reservation(reservation_id):
+    reservation = res_handler.get_reservations(r_id=reservation_id)[0]
+
+    if not reservation:
+        abort(404)
+
+    # show the reservation page
     if request.method == "GET":
-        reservation = res_handler.get_reservations(r_id=reservation_id)[0]
         tags = tag_handler.get_tags(reservation_id)
         comments = com_handler.get_comments(reservation_id)
         print(comments)
         return render_template("reservation.html", reservation=reservation, tags=tags, comments=comments)
 
+    # add a comment to the reservation
     if request.method == "POST":
         # get form information
         comment = request.form["comment"]
 
         # create the comment
-        comment_id = com_handler.add_comment(comment, reservation_id)
+        try:
+            comment_id = com_handler.add_comment(comment, reservation_id)
+        except sqlite3.IntegrityError:
+            abort(403)
 
         return redirect(f"/reservation/{reservation_id}")
 
 # new reservation
 @app.route("/new-reservation", methods=["GET", "POST"])
 def new_reservation():
+    require_login()
+
     if request.method == "GET":
         allowed_tags = tag_handler.get_allowed()
         return render_template("new-reservation.html", allowed_tags=allowed_tags)
@@ -61,6 +76,8 @@ def new_reservation():
 # edit reservation
 @app.route("/edit/<int:reservation_id>", methods=["GET", "POST"])
 def edit_reservation(reservation_id):
+    require_login()
+
     reservation = res_handler.get_reservations(r_id=reservation_id)[0]
 
     # check permission
@@ -96,6 +113,8 @@ def edit_reservation(reservation_id):
 # remove reservation
 @app.route("/remove/<int:reservation_id>", methods=["GET", "POST"])
 def remove_reservation(reservation_id):
+    require_login()
+
     reservation = res_handler.get_reservations(r_id=reservation_id)[0]
 
     # check permission
@@ -157,6 +176,7 @@ def login():
 # logout
 @app.route("/logout")
 def logout():
+    require_login()
     del session["user_id"]
     return redirect("/")
 
