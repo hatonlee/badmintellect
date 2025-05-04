@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User {{ username }}</title>
+    <title>User {{ user.username }}</title>
 </head>
 <body>
-    <h1>{{ username }}</h1>
+    <h1>User {{ user.username }}</h1>
     
     <!-- list of all reservations -->
     <h2>Reservations:</h2>
@@ -19,6 +19,11 @@
             <a href="/reservation/{{ reservation.id }}"> {{ reservation.title }} </a>
         </p>
         {% endfor %}
+    {% endif %}
+
+    <!-- profile picture -->
+    {% if user.has_image %}
+    <img src="/user/{{ user.username }}/image" alt="profile picture">
     {% endif %}
 </body>
 </html>

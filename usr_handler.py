@@ -6,9 +6,11 @@ def create_user(username, password):
     sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
     db.execute(sql, [username, password_hash])
 
-def find_user(username):
-    sql = "SELECT * FROM users WHERE username = ?"
-    result = db.query(sql, [username])
+def get_users(u_id="%", u_username="%"):
+    sql = """SELECT id, username, image IS NOT NULL as has_image
+             FROM users
+             WHERE id LIKE ? AND username LIKE ?"""
+    result = db.query(sql, [u_id, u_username])
     return result if result else None
 
 def check_login(username, password):
@@ -21,3 +23,12 @@ def check_login(username, password):
             return user_id
 
     return None
+
+def set_image(user_id, image):
+    sql = "UPDATE users SET image = ? WHERE id = ?"
+    db.execute(sql, [image, user_id])
+
+def get_image(user_id):
+    sql = "SELECT image FROM users WHERE id = ?"
+    result = db.query(sql, [user_id])
+    return result[0][0] if result else None

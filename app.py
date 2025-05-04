@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import redirect, render_template, request, session, abort
+from flask import redirect, render_template, request, session, abort, make_response
 import res_handler, usr_handler, tag_handler, com_handler, config
 
 app = Flask(__name__)
@@ -28,7 +28,6 @@ def show_reservation(reservation_id):
     if request.method == "GET":
         tags = tag_handler.get_tags(reservation_id)
         comments = com_handler.get_comments(reservation_id)
-        print(comments)
         return render_template("reservation.html", reservation=reservation, tags=tags, comments=comments)
 
     # add a comment to the reservation
@@ -182,7 +181,7 @@ def register():
             abort(403)
 
         # check if the username already exists
-        if usr_handler.find_user(username):
+        if usr_handler.get_users(u_username=username):
             return("Username already exists!")
         
 
@@ -225,9 +224,56 @@ def search():
 @app.route("/user/<username>")
 def user(username):
     # get the user_id
-    user_id = usr_handler.find_user(username)[0][0]
+    users = usr_handler.get_users(u_username=username)
+    
+    if not users:
+        abort(403)
+    user = users[0]
 
     # get reservations of the user
-    reservations = res_handler.get_reservations(r_user_id=user_id)
+    reservations = res_handler.get_reservations(r_user_id=user[0])
 
-    return render_template("user.html", username=username, reservations=reservations)
+    return render_template("user.html", user=user, reservations=reservations)
+
+# user profile picture page
+@app.route("/user/<username>/image")
+def user_image(username):
+    users = usr_handler.get_users(u_username=username)
+
+    if not users:
+        abort(403)
+    user = users[0]
+
+    image = usr_handler.get_image(user[0])
+    if not image:
+        abort(404)
+    
+    response = make_response(bytes(image))
+    response.headers.set("Content-Type", "image/jpeg")
+    return response
+
+# add profile picture
+@app.route("/add-image", methods = ["GET", "POST"])
+def add_image():
+    require_login()
+
+    # show the form
+    if request.method == "GET":
+        return render_template("add-image.html")
+    
+    # add the image
+    if request.method == "POST":
+        image_file = request.files["image"]
+        if not image_file.filename.endswith(".jpg"):
+            return "Incorrect filetype"
+        
+        image = image_file.read()
+        if len(image) > 100 * 1024:
+            return "Filesize too large"
+    
+        user_id = session["user_id"]
+        usr_handler.set_image(user_id, image)
+
+        username = usr_handler.get_users(u_id=user_id)[0]["username"]
+        
+        return redirect(f"/user/{username}")
