@@ -26,7 +26,8 @@ def remove_tag(tag, reservation_id):
 def get_allowed():
     sql = """SELECT tag
              FROM allowed_tags"""
-    return db.query(sql)
+    result = db.query(sql)
+    return result if result else None
 
 # check if a tag is allowed
 def is_allowed(tag):

@@ -9,8 +9,7 @@ def create_user(username, password):
 def find_user(username):
     sql = "SELECT * FROM users WHERE username = ?"
     result = db.query(sql, [username])
-
-    return result
+    return result if result else None
 
 def check_login(username, password):
     sql = "SELECT id, password_hash FROM users WHERE username = ?"

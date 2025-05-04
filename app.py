@@ -96,7 +96,7 @@ def edit_reservation(reservation_id):
     reservation = res_handler.get_reservations(r_id=reservation_id)[0]
 
     # check permission
-    if reservation.user_id != session["user_id"]:
+    if reservation["user_id"] != session["user_id"]:
         abort(403)
 
     # show the edit page
@@ -144,7 +144,7 @@ def remove_reservation(reservation_id):
     reservation = res_handler.get_reservations(r_id=reservation_id)[0]
 
     # check permission
-    if reservation.user_id != session["user_id"]:
+    if reservation["user_id"] != session["user_id"]:
         abort(403)
 
     # show the remove page

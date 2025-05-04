@@ -5,7 +5,8 @@ def get_comments(reservation_id):
     sql = """SELECT comment
              FROM comments
              WHERE reservation_id = ?"""
-    return db.query(sql, [reservation_id])
+    result = db.query(sql, [reservation_id])
+    return result if result else None
 
 # add a comment into a reservation
 def add_comment(comment, reservation_id):
