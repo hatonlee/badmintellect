@@ -40,7 +40,7 @@ def index(page=1):
 def show_reservation(reservation_id):
     reservations = res_handler.get_reservations(r_id=reservation_id)
 
-    if not reservation:
+    if not reservations:
         abort(404) 
     reservation = reservations[0]
 
@@ -122,14 +122,14 @@ def edit_reservation(reservation_id):
 
     # show the edit page
     if request.method == "GET":
-        check_csrf()
-        
         allowed_tags = tag_handler.get_allowed()
         tags = tag_handler.get_tags(reservation_id)
         return render_template("edit.html", reservation=reservation, allowed_tags=allowed_tags, tags=tags)
 
     # commit the edit
     if request.method == "POST":
+        check_csrf()
+
         # get form information
         new_title = request.form["title"]
         new_start_time = request.form["start_time"]
@@ -180,6 +180,7 @@ def remove_reservation(reservation_id):
         
         if "remove" in request.form:
             tag_handler.remove_tag("%", reservation_id)
+            com_handler.remove_comments(c_id="%", r_id=reservation_id)
             res_handler.remove_reservation(reservation["id"])
             return redirect("/")
 
@@ -190,7 +191,7 @@ def remove_reservation(reservation_id):
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "GET":
-        return render_template("register.html")
+        return render_template("register.html", filled={})
 
     if request.method == "POST":
         username = request.form["username"]
@@ -199,7 +200,8 @@ def register():
 
         if password_1 != password_2:
             flash("Passwords do not match!")
-            return redirect("/register")
+            filled = {"username": username}
+            return render_template("register.html", filled=filled)
 
         # input validation
         if (not username or
@@ -210,7 +212,8 @@ def register():
         # check if the username already exists
         if usr_handler.get_users(u_username=username):
             flash("Username already exists!")
-            return redirect("/register")
+            filled = {"username": username}
+            return render_template("register.html", filled=filled)
 
         user_id = usr_handler.create_user(username, password_1)
         flash("Account created succesfully!")
@@ -220,7 +223,7 @@ def register():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return render_template("login.html")
+        return render_template("login.html", filled={})
 
     if request.method == "POST":
         username = request.form["username"]
@@ -232,7 +235,9 @@ def login():
             session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
         else:
-            return "Incorrect username or password"
+            flash("Incorrect username or password.")
+            filled = {"username": username}
+            return render_template("login.html", filled=filled)
 
 # logout
 @app.route("/logout")

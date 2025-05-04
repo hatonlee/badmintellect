@@ -20,7 +20,7 @@
     <form action="/register" method="post">
     <p>
         <label for="username">Username</label>
-        <input type="text" name="username" required maxlength="25"/>
+        <input type="text" name="username" value="{{ filled.username }}" required maxlength="25"/>
     </p>
     <p>
         <label for="password_1">Password</label>

@@ -18,7 +18,7 @@ def add_comment(comment, reservation_id):
     return comment_id
 
 # remove a comment from a reservation
-def remove_comment(comment_id, reservation_id):
+def remove_comments(c_id="-1", r_id="-1"):
     sql = """DELETE FROM comments
-             WHERE id = ? AND reservation_id = ?"""
-    db.execute(sql, [comment_id, reservation_id])
+             WHERE id LIKE ? AND reservation_id LIKE ?"""
+    db.execute(sql, [c_id, r_id])

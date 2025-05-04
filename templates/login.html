@@ -9,11 +9,18 @@
     <!-- title -->
     <h1>Login</h1>
 
+    <!-- flash -->
+    {% for message in get_flashed_messages() %}
+    <p>
+      <b>{{ message }}</b>
+    </p>
+    {% endfor %}
+
     <!-- login -->
     <form action="/login" method="post">
     <p>
         <label for="title">Username</label>
-        <input type="text" name="username" required/>
+        <input type="text" name="username" value="{{ filled.username }}" required/>
     </p>
     <p>
         <label for="title">Password</label>
