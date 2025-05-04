@@ -1,12 +1,16 @@
 import db
 
 # get a list of all the matching reservations and their details
-def get_reservations(r_id="%", r_title="%", r_start_time="%", r_end_time="%", r_place="%", r_user_id="%"):
+def get_reservations(r_id="%", r_title="%", r_start_time="%", r_end_time="%", r_place="%", r_user_id="%", page=1, page_size=25):
     sql = """SELECT *
              FROM reservations
              WHERE id LIKE ? AND title LIKE ? AND start_time LIKE ? AND end_time LIKE ? AND place LIKE ? and user_id LIKE ?
-             ORDER BY id DESC"""
-    result = db.query(sql, [r_id, r_title, r_start_time, r_end_time, r_place, r_user_id])
+             ORDER BY id DESC
+             LIMIT ? OFFSET ?"""
+    
+    limit = page_size
+    offset = page_size * (page - 1)
+    result = db.query(sql, [r_id, r_title, r_start_time, r_end_time, r_place, r_user_id, limit, offset])
     return result if result else None
 
 # add a new reservation into the database
@@ -30,3 +34,8 @@ def remove_reservation(reservation_id):
     sql = """DELETE FROM reservations
              WHERE id = ?"""
     db.execute(sql, [reservation_id])
+
+def count():
+    sql = """SELECT COUNT(*)
+             FROM reservations"""
+    return db.query(sql)[0][0]

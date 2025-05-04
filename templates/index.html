@@ -30,9 +30,9 @@
         </p>
     </form>
 
-    <!-- list of all reservations -->
+    <!-- list of reservations -->
     {% if not reservations %}
-    <p>The are no reservations at the moment :(</p>
+    <p>The are no reservations</p>
     {% else %}
         {% for reservation in reservations %}
         <p>
@@ -40,6 +40,13 @@
         </p>
         {% endfor %}
     {% endif %}
+
+    <!-- page navigation -->
+    <nav>
+        <a href="/{{ page - 1 }}">&lt;&lt;</a>
+        Page {{ page }}/{{ page_count }}
+        <a href="/{{ page + 1 }}">&gt;&gt;</a>
+    </nav>
 
     <!-- add new reservation -->
     {% if session.user_id %}

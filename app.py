@@ -2,6 +2,7 @@ import sqlite3
 from flask import Flask
 from flask import redirect, render_template, request, session, abort, make_response
 import res_handler, usr_handler, tag_handler, com_handler, config
+import math
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -12,9 +13,22 @@ def require_login():
 
 # main page
 @app.route("/")
-def index():
-    reservations = res_handler.get_reservations()
-    return render_template("index.html", reservations=reservations)
+@app.route("/<int:page>")
+def index(page=1):
+    # pagination
+    page_size = 25
+    reservation_count = res_handler.count()
+    page_count = math.ceil(reservation_count / page_size)
+    page_count = max(page_count, 1)
+
+    if page < 1:
+        return redirect("/1")
+    
+    if page > page_count:
+        return redirect(f"/{page_count}")
+
+    reservations = res_handler.get_reservations(page=page, page_size=page_size)
+    return render_template("index.html", page=page, page_count=page_count, reservations=reservations)
 
 # show a reservation
 @app.route("/reservation/<int:reservation_id>", methods=["GET", "POST"])
