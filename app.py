@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import redirect, render_template, request, session, abort, make_response
+from flask import redirect, render_template, request, session, abort, make_response, flash
 import res_handler, usr_handler, tag_handler, com_handler, config
 import math
 import secrets
@@ -38,10 +38,11 @@ def index(page=1):
 # show a reservation
 @app.route("/reservation/<int:reservation_id>", methods=["GET", "POST"])
 def show_reservation(reservation_id):
-    reservation = res_handler.get_reservations(r_id=reservation_id)[0]
+    reservations = res_handler.get_reservations(r_id=reservation_id)
 
     if not reservation:
-        abort(404)
+        abort(404) 
+    reservation = reservations[0]
 
     # show the reservation page
     if request.method == "GET":
@@ -197,7 +198,8 @@ def register():
         password_2 = request.form["password_2"]
 
         if password_1 != password_2:
-            return "Passwords do not match"
+            flash("Passwords do not match!")
+            return redirect("/register")
 
         # input validation
         if (not username or
@@ -207,11 +209,12 @@ def register():
 
         # check if the username already exists
         if usr_handler.get_users(u_username=username):
-            return("Username already exists!")
-        
+            flash("Username already exists!")
+            return redirect("/register")
 
-        usr_handler.create_user(username, password_1)
-        return "Account created"
+        user_id = usr_handler.create_user(username, password_1)
+        flash("Account created succesfully!")
+        return redirect(f"/user/{user_id}")
 
 # log in
 @app.route("/login", methods=["GET", "POST"])
@@ -236,6 +239,7 @@ def login():
 def logout():
     require_login()
     del session["user_id"]
+    flash("Logout succesful!")
     return redirect("/")
 
 # search
@@ -293,15 +297,18 @@ def add_image():
 
         image_file = request.files["image"]
         if not image_file.filename.endswith(".jpg"):
-            return "Incorrect filetype"
+            flash("Wrong filetype!")
+            return redirect("/add-image")
         
         image = image_file.read()
         if len(image) > 100 * 1024:
-            return "Filesize too large"
+            flash("Image is too large!")
+            return redirect("/add-image")
     
         user_id = session["user_id"]
         usr_handler.set_image(user_id, image)
 
         username = usr_handler.get_users(u_id=user_id)[0]["username"]
         
+        flash("Profile picture added succesfully!")
         return redirect(f"/user/{username}")

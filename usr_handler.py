@@ -5,6 +5,8 @@ def create_user(username, password):
     password_hash = generate_password_hash(password)
     sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
     db.execute(sql, [username, password_hash])
+    user_id = db.last_insert_id()
+    return user_id
 
 def get_users(u_id="%", u_username="%"):
     sql = """SELECT id, username, image IS NOT NULL as has_image

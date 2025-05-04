@@ -9,6 +9,13 @@
     <!-- title -->
     <h1>Add profile picture</h1>
 
+    <!-- flash -->
+    {% for message in get_flashed_messages() %}
+    <p>
+      <b>{{ message }}</b>
+    </p>
+    {% endfor %}
+
     <!-- form -->
     <form action="/add-image" method="post" enctype="multipart/form-data">
         <label for="image"></label>

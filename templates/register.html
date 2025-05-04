@@ -9,6 +9,13 @@
     <!-- title -->
     <h1>Sign up</h1>
 
+    <!-- flash -->
+    {% for message in get_flashed_messages() %}
+    <p>
+      <b>{{ message }}</b>
+    </p>
+    {% endfor %}
+
     <!-- form -->
     <form action="/register" method="post">
     <p>
