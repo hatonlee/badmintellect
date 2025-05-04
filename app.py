@@ -36,6 +36,10 @@ def show_reservation(reservation_id):
         # get form information
         comment = request.form["comment"]
 
+        # input validation
+        if not comment or len(comment) > 1000:
+            abort(403)
+
         # create the comment
         try:
             comment_id = com_handler.add_comment(comment, reservation_id)
@@ -62,6 +66,17 @@ def new_reservation():
         end_time = request.form["end_time"]
         place = request.form["place"]
         tags = request.form.getlist("tag")
+
+        # input validation
+        if (not title or
+            not start_time or
+            not end_time or
+            not place or
+            len(title) > 50 or
+            len(start_time) > 25 or
+            len(end_time) > 25 or
+            len(place) > 50):
+            abort(403)
 
         # create the reservation
         reservation_id = res_handler.add_reservation(title, start_time, end_time, place, user_id)
@@ -99,13 +114,24 @@ def edit_reservation(reservation_id):
         new_place = request.form["place"]
         tags = request.form.getlist("tag")
 
+        # input validation
+        if (not new_title or
+            not new_start_time or
+            not new_end_time or
+            not new_place or
+            len(new_title) > 50 or
+            len(new_start_time) > 25 or
+            len(new_end_time) > 25 or
+            len(new_place) > 50):
+            abort(403)
+
         # remove old tags and add new
         tag_handler.remove_tag("%", reservation_id)
         for tag in tags:
             tag_handler.add_tag(tag, reservation_id)
 
         # update the reservation
-        res_handler.update_reservation(reservation["id"], new_title, new_start_time, new_end_time, new_place)
+        res_handler.update_reservation(reservation_id, new_title, new_start_time, new_end_time, new_place)
         
         # redirect to the reservation
         return redirect(f"/reservation/{reservation_id}")
@@ -149,9 +175,16 @@ def register():
         if password_1 != password_2:
             return "Passwords do not match"
 
+        # input validation
+        if (not username or
+            not password_1 or
+            len(username) > 25):
+            abort(403)
+
         # check if the username already exists
         if usr_handler.find_user(username):
             return("Username already exists!")
+        
 
         usr_handler.create_user(username, password_1)
         return "Account created"
