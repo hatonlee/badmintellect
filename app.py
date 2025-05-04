@@ -191,17 +191,23 @@ def remove_reservation(reservation_id):
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "GET":
-        return render_template("register.html", filled={})
+        return render_template("register.html", filled={}, next_page=request.referrer)
 
     if request.method == "POST":
         username = request.form["username"]
         password_1 = request.form["password_1"]
         password_2 = request.form["password_2"]
+        next_page = request.form["next_page"]   
 
         if password_1 != password_2:
             flash("Passwords do not match!")
             filled = {"username": username}
-            return render_template("register.html", filled=filled)
+            return render_template("register.html", filled=filled, next_page=next_page)
+        
+        if len(password_1) < 8:
+            flash("Password is too short!")
+            filled = {"username": username}
+            return render_template("register.html", filled=filled, next_page=next_page)
 
         # input validation
         if (not username or
@@ -213,31 +219,39 @@ def register():
         if usr_handler.get_users(u_username=username):
             flash("Username already exists!")
             filled = {"username": username}
-            return render_template("register.html", filled=filled)
+            return render_template("register.html", filled=filled, next_page=next_page)
 
+        # login on signup
         user_id = usr_handler.create_user(username, password_1)
+        session["user_id"] = user_id
+        session["csrf_token"] = secrets.token_hex(16)
+
         flash("Account created succesfully!")
-        return redirect(f"/user/{user_id}")
+        if next_page[-1] == "/":
+            return redirect(f"/user/{username}")
+        else:
+            return redirect(next_page)
 
 # log in
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "GET":
-        return render_template("login.html", filled={})
+        return render_template("login.html", filled={}, next_page=request.referrer)
 
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        next_page = request.form["next_page"]
 
         user_id = usr_handler.check_login(username, password)
         if user_id:
             session["user_id"] = user_id
             session["csrf_token"] = secrets.token_hex(16)
-            return redirect("/")
+            return redirect(next_page)
         else:
             flash("Incorrect username or password.")
             filled = {"username": username}
-            return render_template("login.html", filled=filled)
+            return render_template("login.html", filled=filled, next_page=next_page)
 
 # logout
 @app.route("/logout")

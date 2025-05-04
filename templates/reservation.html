@@ -35,6 +35,18 @@
     </p>
     {% endif %}
 
+    <!-- post a comment -->
+    {% if session.user_id %}
+    <h3>Create a new comment</h3>
+    <form action="/reservation/{{ reservation.id }}", method="post">
+        <textarea name="comment" id="comment" maxlength="1000" required></textarea>
+        <input type="submit" value="Post">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+    </form>
+    {% else %}
+    <a href="/login">Login</a> or <a href="/register">Sign up</a> to comment.
+    {% endif %}
+
     <!-- comments -->
     <h2>Comments</h2>
     <div>
@@ -46,16 +58,6 @@
             No comments
         {% endif %}
     </div>
-
-    <!-- post a comment -->
-    {% if session.user_id %}
-    <h3>Create a new comment</h3>
-    <form action="/reservation/{{ reservation.id }}", method="post">
-        <textarea name="comment" id="comment" maxlength="1000" required></textarea>
-        <input type="submit" value="Post">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
-    </form>
-    {% endif %}
 
     <!-- front page -->
     <p>

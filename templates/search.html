@@ -10,11 +10,16 @@
     <h1> Search " {{ query }} "</h1>
 
     <!-- search results -->
-    {% for reservation in reservations %}
-    <p>
-        <a href="/reservation/{{ reservation.id }}"> {{ reservation.title }} </a>
-    </p>
-    {% endfor %}
+    {% if not reservations %}
+    <h2>No reservations found.</h2>
+    {% else %}
+        {% for reservation in reservations %}
+        <p>
+            <a href="/reservation/{{ reservation.id }}"> {{ reservation.title }} </a>
+        </p>
+        {% endfor %}
+    {% endif %}
+
 
     <!-- front page -->
     <p>

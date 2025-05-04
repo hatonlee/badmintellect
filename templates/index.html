@@ -38,6 +38,13 @@
         </p>
     </form>
 
+    <!-- add new reservation -->
+    {% if session.user_id %}
+    <a href="/new-reservation">New reservation</a>
+    {% else %}
+    <a href="/login">Login</a> or <a href="/register">Sign up</a> to create a reservation.
+    {% endif %}
+
     <!-- list of reservations -->
     {% if not reservations %}
     <p>The are no reservations</p>
@@ -55,10 +62,5 @@
         Page {{ page }}/{{ page_count }}
         <a href="/{{ page + 1 }}">&gt;&gt;</a>
     </nav>
-
-    <!-- add new reservation -->
-    {% if session.user_id %}
-    <a href="/new-reservation">New reservation</a>
-    {% endif %}
 </body>
 </html>

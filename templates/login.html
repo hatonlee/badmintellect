@@ -18,16 +18,18 @@
 
     <!-- login -->
     <form action="/login" method="post">
-    <p>
-        <label for="title">Username</label>
-        <input type="text" name="username" value="{{ filled.username }}" required/>
-    </p>
-    <p>
-        <label for="title">Password</label>
-        <input type="password" name="password" required/>
-    </p>
-    <input type="submit" value="Login"/>
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+        <p>
+            <label for="title">Username</label>
+            <input type="text" name="username" value="{{ filled.username }}" required/>
+        </p>
+        <p>
+            <label for="title">Password</label>
+            <input type="password" name="password" required/>
+        </p>
+        <input type="submit" value="Login"/>
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+        <input type="hidden" name="next_page" value="{{ next_page }}" />
+
     </form>
 
     <!-- front page -->
