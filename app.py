@@ -1,6 +1,6 @@
 import sqlite3
 from flask import Flask
-from flask import redirect, render_template, request, session
+from flask import redirect, render_template, request, session, abort
 import res_handler, usr_handler, tag_handler, com_handler, config
 
 app = Flask(__name__)
@@ -63,11 +63,17 @@ def new_reservation():
 def edit_reservation(reservation_id):
     reservation = res_handler.get_reservations(r_id=reservation_id)[0]
 
+    # check permission
+    if reservation.user_id != session["user_id"]:
+        abort(403)
+
+    # show the edit page
     if request.method == "GET":
         allowed_tags = tag_handler.get_allowed()
         tags = tag_handler.get_tags(reservation_id)
         return render_template("edit.html", reservation=reservation, allowed_tags=allowed_tags, tags=tags)
 
+    # commit the edit
     if request.method == "POST":
         # get form information
         new_title = request.form["title"]
@@ -92,9 +98,15 @@ def edit_reservation(reservation_id):
 def remove_reservation(reservation_id):
     reservation = res_handler.get_reservations(r_id=reservation_id)[0]
 
+    # check permission
+    if reservation.user_id != session["user_id"]:
+        abort(403)
+
+    # show the remove page
     if request.method == "GET":
         return render_template("remove.html", reservation=reservation)
 
+    # commit the removal
     if request.method == "POST":
         if "remove" in request.form:
             tag_handler.remove_tag("%", reservation_id)
