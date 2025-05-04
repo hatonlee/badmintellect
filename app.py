@@ -3,12 +3,17 @@ from flask import Flask
 from flask import redirect, render_template, request, session, abort, make_response
 import res_handler, usr_handler, tag_handler, com_handler, config
 import math
+import secrets
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
 
 def require_login():
     if "user_id" not in session:
+        abort(403)
+
+def check_csrf():
+    if request.form["csrf_token"] != session["csrf_token"]:
         abort(403)
 
 # main page
@@ -71,6 +76,8 @@ def new_reservation():
         return render_template("new-reservation.html", allowed_tags=allowed_tags)
 
     if request.method == "POST":
+        check_csrf()
+        
         user_id = session["user_id"]
 
         # get form information
@@ -114,6 +121,8 @@ def edit_reservation(reservation_id):
 
     # show the edit page
     if request.method == "GET":
+        check_csrf()
+        
         allowed_tags = tag_handler.get_allowed()
         tags = tag_handler.get_tags(reservation_id)
         return render_template("edit.html", reservation=reservation, allowed_tags=allowed_tags, tags=tags)
@@ -166,6 +175,8 @@ def remove_reservation(reservation_id):
 
     # commit the removal
     if request.method == "POST":
+        check_csrf()
+        
         if "remove" in request.form:
             tag_handler.remove_tag("%", reservation_id)
             res_handler.remove_reservation(reservation["id"])
@@ -215,6 +226,7 @@ def login():
         user_id = usr_handler.check_login(username, password)
         if user_id:
             session["user_id"] = user_id
+            session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
         else:
             return "Incorrect username or password"
@@ -277,6 +289,8 @@ def add_image():
     
     # add the image
     if request.method == "POST":
+        check_csrf()
+
         image_file = request.files["image"]
         if not image_file.filename.endswith(".jpg"):
             return "Incorrect filetype"

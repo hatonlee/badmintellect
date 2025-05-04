@@ -27,6 +27,7 @@
             <label for="query">Search...</label>
             <input type="text" name="query"/>
             <input type="submit" value="Submit"/>
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
         </p>
     </form>
 

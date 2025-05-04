@@ -23,7 +23,8 @@
         <label for="password_2">Password again</label>
         <input type="password" name="password_2" required maxlength="64"/>
     </p>
-        <input type="submit" value="Sign Up"/>
+    <input type="submit" value="Sign Up"/>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
     </form>
     
     <!-- front page -->
