@@ -1,26 +1,25 @@
 # badmintellect
+*The smarter badminton reservation site*
 
-## Features of the application
-* Account system with login and signup
-* Ability to view and create reservations
-* Ability to modify reservations
-* Search for reservations
-* Tags for reservations
-* Commenting on reservations
+## Features
+* Account system with robust session handling and security.
+* View, create and edit reservations.
+* Extensive search for reservations.
+* Add tags to your reservations to personalize them.
+* Enroll in reservations to chat with others.
 
-## TO:DO
-* More sophisticated user profile including a description and a profile picture.
-* Search by tags and other filters
-* Statistics page
-* Ability to join a reservation.
+## Using the application for development
+1. Install [Flask](https://flask.palletsprojects.com/)
+2. Run the `init.py` initialization script
+3. Start the flask server
 
-## Using the application
-1. Initialize the database
-```
-sqlite3 database.db < schema.sql
-```
-
-2. Start the server (development only)
 ```
 flask run
 ```
+
+## Resources and Attributions
+
+- Made with [Flask](https://flask.palletsprojects.com/) using [SQLite3](https://www.sqlite.org/)
+- Photos by [Unsplash](https://unsplash.com)
+- Fonts by [Google Fonts](https://fonts.google.com/)
+- Icons by [Material Icons](https://material.io/resources/icons/)
