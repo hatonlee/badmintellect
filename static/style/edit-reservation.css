@@ -1,0 +1,77 @@
+.edit-reservation-title {
+    place-self: center;
+}
+
+.edit-reservation-form {
+    display: grid;
+    gap: 1rem;
+}
+
+.main-inputs-container {
+    display: grid;
+    grid-template: repeat(5, max-content) / repeat(2, max-content);
+    gap: 1rem;
+}
+
+.main-input-label {
+    place-self: center start;
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-column: span 2;
+    place-items: center stretch;
+}
+
+.tags-title {
+    place-self: center;
+}
+
+.tags-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.25rem 1rem;
+    place-self: center;
+}
+
+.tag-container {
+    display: grid;
+    place-items: center end;
+    gap: 0.5rem;
+    grid-template-columns: 1fr max-content;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkmark-container {
+    display: grid;
+    place-items: center;
+    background: var(--color-bg-1);
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0.25rem;
+    border-radius: 4px;
+}
+
+.checkmark {
+    display: none;
+    color: var(--color-bg-1);
+}
+
+.checkbox {
+    display: none;
+}
+
+.checkbox:checked + .checkmark-container {
+    background: var(--color-accent-1);
+}
+
+.checkbox:checked + .checkmark-container .checkmark {
+    display: block;
+}
+
+.no-tags {
+    place-self: center;
+}
+
+.submit-button {
+    place-self: center;
+}

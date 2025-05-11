@@ -1,0 +1,75 @@
+.profile-banner {
+    display: grid;
+    grid-template:
+    "pfp username edit" min-content
+    "pfp count ." 1fr /
+    max-content max-content;
+    column-gap: 1rem;
+    height: max-content;
+}
+
+.profile-picture-container {
+    grid-area: pfp;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.username-container {
+    grid-area: username;
+    display: grid;
+    grid-auto-flow: column;
+    gap: 0.5rem;
+}
+
+.username {
+    place-self: start;
+}
+
+.badmin-badge {
+    place-self: center start;
+    padding: 0.1rem 0.5rem 0 0.5rem;
+    border-radius: 8px;
+    background: var(--color-error);
+}
+
+.reservation-count {
+    grid-area: count;
+}
+
+.edit-link {
+    grid-area: edit;
+    place-self: center end;
+    display: grid;
+}
+
+.edit-icon {
+    place-self: center;
+}
+
+.reservations-title {
+    place-self: center;
+}
+
+.no-reservations {
+    place-self: center;
+}
+
+.page-navigation {
+    display: grid;
+    grid-auto-flow: column;
+    gap: 1rem;
+    place-content: center;
+}
+
+.navigation-button {
+    color: var(--color-accent-1);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font-size: 1rem;
+}
+
+.navigation-button:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}

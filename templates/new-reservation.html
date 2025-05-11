@@ -1,49 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New reservation</title>
-</head>
-<body>
-    <!-- Title -->
-    <h1>Create a new reservation</h1>
+{% extends "layout.html" %}
 
-    <!-- Form -->
-    <form action="/new-reservation" method="post">
-        <!-- Required info -->
-        <p>
-            <label for="title">Title</label>
-            <input type="text" name="title" required maxlength="50"/>
-        </p>
-        <p>
-            <label for="start_time">Start time</label>
-            <input type="text" name="start_time" required maxlength="25"/>
-        </p>
-        <p>
-            <label for="end_time">End time</label>
-            <input type="text" name="end_time" required maxlength="25"/>
-        </p>
-        <p>
-            <label for="place">Place</label>
-            <input type="text" name="place" required maxlength="50"/>
-        </p>
+{% block head %}
+<link rel="stylesheet" href="/static/style/new-reservation.css">
+{% endblock %}
 
-        <!-- Tags -->
-        <h2>Tags</h2>
-        {% if not allowed_tags %}
-        <p>Unfortunately there are no tags available</p>
-        {% else %}
-        <p>
-            {% for tag in allowed_tags %}
-            <input type="checkbox" name="tag" value="{{ tag[0] }}">
-            <label for="tag">{{ tag[0] }}</label>
-            {% endfor %}
-        </p>
-        {% endif %}
+{% block title %}New reservation{% endblock %}
 
-        <input type="submit" value="Submit"/>
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
-    </form>
-</body>
-</html>
+{% block content %}
+<h2 class="new-reservation-title">Create a new reservation</h2>
+
+<form class="new-reservation-form" action="/new-reservation" method="post">
+    <div class="main-inputs-container">
+        <label class="main-input-label">
+            <p class="main-input-label-text">Title</p>
+            <input class="main-input" type="text" name="title" required maxlength="50"/>
+        </label>
+        <label class="main-input-label">
+            <p class="main-input-label-text">Place</p>
+            <input class="main-input" type="text" name="place" required maxlength="50"/>
+        </label>
+        <label class="main-input-label">
+            <p class="main-input-label-text">Date</p>
+            <input class="main-input" type="date" name="date" required/>
+        </label>
+        <label class="main-input-label">
+            <p class="main-input-label-text">Time</p>
+            <input class="main-input" type="time" name="time" required/>
+        </label>
+        <label class="main-input-label">
+            <p class="main-input-label-text">Duration</p>
+            <select class="main-input" name="duration">
+                <option value="00:30">30 minutes</option>
+                <option value="01:00">1 hour</option>
+                <option value="01:30">1 hour 30 minutes</option>
+                <option value="02:00">2 hours</option>
+                <option value="02:30">2 hours 30 minutes</option>
+                <option value="03:00">3 hours</option>
+                <option value="03:30">3 hours 30 minutes</option>
+                <option value="04:00">4 hours</option>
+                <option value="04:30">4 hours 30 minutes</option>
+                <option value="05:00">5 hours</option>
+                <option value="05:30">5 hours 30 minutes</option>
+                <option value="06:00">6 hours</option>
+            </select>
+        </label>
+    </div>
+
+    <h2 class="tags-title">Tags</h2>
+    {% if allowed_tags %}
+    <div class="tags-container">
+        {% for tag in allowed_tags %}
+        <label class="tag-container">
+            {{ tag.tag }}
+            <input class="checkbox" type="checkbox" name="tag" value="{{ tag.tag }}">
+            <span class="checkmark-container">
+                <span class="checkmark material-symbols-outlined">check</span>
+            </span>
+        </label>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="no-tags">No tags available</p>
+    {% endif %}
+
+    <input class="button-small submit-button" type="submit" value="Submit"/>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+</form>
+{% endblock %}

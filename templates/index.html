@@ -1,66 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>badmintellect</title>
-</head>
-<body>
-    <!-- title -->
-    <h1>badmintellect</h1>
+{% extends "layout.html" %}
 
-    <!-- flash -->
-    {% for message in get_flashed_messages() %}
-    <p>
-      <b>{{ message }}</b>
-    </p>
-    {% endfor %}
+{% block head %}
+<link rel="stylesheet" href="/static/style/index.css">
+<link rel="stylesheet" href="/static/style/reservation-list.css">
+{% endblock %}
 
-    <!-- account management -->
-    <p>
-        {% if session.user_id %}
-        <a href="/logout">Log Out</a>
-        {% else %}
-        <a href="/register">Sign Up</a> |
-        <a href="/login">Sign In</a>
-        {% endif %}
-    </p>
-    
-    <h2>Reservations</h2>
+{% block title %}badmintellect{% endblock %}
 
-    <!-- search -->
-    <form action="/search" method="post">
-        <p>
-            <label for="query">Search...</label>
-            <input type="text" name="query"/>
-            <input type="submit" value="Submit"/>
-            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
-        </p>
+{% block content %}
+    <h2 class="reservations-title">Reservations</h2>
+    {% if reservations %}
+    {% include "reservation-list.html"%}
+    {% else %}
+    <p class="no-reservations">No reservations</p>
+    {% endif %}
+
+    {% if reservations %}
+    <form action="/" class="page-navigation">
+        <button class="navigation-button" name=page value="{{ [1, page - 1] | max }}">&lt;&lt;</button>
+        <p class="current-page">{{ page }} / {{ page_count }}</p>
+        <button class="navigation-button" name=page value="{{ [page_count, page + 1] | min }}">&gt;&gt;</button>
     </form>
-
-    <!-- add new reservation -->
-    {% if session.user_id %}
-    <a href="/new-reservation">New reservation</a>
-    {% else %}
-    <a href="/login">Login</a> or <a href="/register">Sign up</a> to create a reservation.
     {% endif %}
-
-    <!-- list of reservations -->
-    {% if not reservations %}
-    <p>The are no reservations</p>
-    {% else %}
-        {% for reservation in reservations %}
-        <p>
-            <a href="/reservation/{{ reservation.id }}"> {{ reservation.title }} </a>
-        </p>
-        {% endfor %}
-    {% endif %}
-
-    <!-- page navigation -->
-    <nav>
-        <a href="/{{ page - 1 }}">&lt;&lt;</a>
-        Page {{ page }}/{{ page_count }}
-        <a href="/{{ page + 1 }}">&gt;&gt;</a>
-    </nav>
-</body>
-</html>
+{% endblock %}

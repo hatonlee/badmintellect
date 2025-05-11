@@ -1,0 +1,58 @@
+<div class="reservations">
+{% if reservations %}
+<div class="column-names reservation">
+    <div class="info-container no-icon">
+        <p class="info-item">Reservation title</p>
+    </div>
+    <div class="info-container no-icon">
+        <p class="info-item">Place</p>
+    </div>
+    <div class="info-container no-icon">
+        <p class="info-item">Enrolled users</p>
+    </div>
+    <div class="info-container no-icon">
+        <p class="info-item">Date</p>
+    </div>
+    <div class="info-container no-icon">
+        <p class="info-item">Time</p>
+    </div>
+    <div class="info-container no-icon">
+        <p class="info-item">Duration</p>
+    </div>
+    <div class="info-container no-icon">
+        <p class="info-item">User</p>
+    </div>
+</div>
+    {% for reservation in reservations %}
+    <div class="reservation">
+        <div class="info-container no-icon">
+            <a href="/reservation/{{ reservation.reservation_id }}" class="info-item">{{ reservation.title }}</a>
+        </div>
+        <div class="info-container">
+            <span class="material-symbols-outlined">location_on</span>
+            <p class="info-item">{{ reservation.place }}</p>
+        </div>
+        <div class="info-container">
+            <span class="material-symbols-outlined">person</span>
+            <p class="info-item">{{ reservation.enrolled_count }}</p>
+        </div>
+        <div class="info-container">
+            <span class="material-symbols-outlined">calendar_month</span>
+            <p class="info-item">{{ reservation.date }}</p>
+        </div>
+        <div class="info-container">
+            <span class="material-symbols-outlined">schedule</span>
+            <p class="info-item">{{ reservation.time }}</p>
+        </div>
+        <div class="info-container">
+            <span class="material-symbols-outlined">hourglass</span>
+            <p class="info-item">{{ reservation.duration }}</p>
+        </div>
+        <div class="info-container">
+            <span class="material-symbols-outlined">person</span>
+            <p class="info-item"><a href="/user/{{reservation.username}}">{{ reservation.username }}</a></p>
+        </div>
+    </div>
+    {% endfor %}
+{% endif %}
+</div>

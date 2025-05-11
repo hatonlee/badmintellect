@@ -1,0 +1,27 @@
+.reservations-title {
+    place-self: center;
+}
+
+.no-reservations {
+    place-self: center;
+}
+
+.page-navigation {
+    display: grid;
+    grid-auto-flow: column;
+    gap: 1rem;
+    place-content: center;
+}
+
+.navigation-button {
+    color: var(--color-accent-1);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font-size: 1rem;
+}
+
+.navigation-button:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}

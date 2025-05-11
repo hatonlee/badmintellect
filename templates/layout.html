@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="dark">
+    <meta name="description" content="The smarter badminton reservation site">
+    <link rel="stylesheet" href="/static/style/layout.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap">
+    {% block head %}{% endblock %}
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+    <div class="banner">
+        <span class="main-title {% if session.user_role == 'badmin' %}badmin-title{% endif %}">
+            <h1 class="main-title-letter title-font">B</h1>
+            <h1 class="main-title-letter title-font">A</h1>
+            <h1 class="main-title-letter title-font">D</h1>
+            <h1 class="main-title-letter title-font">M</h1>
+            <h1 class="main-title-letter title-font">I</h1>
+            <h1 class="main-title-letter title-font">N</h1>
+            <h1 class="main-title-letter title-font">T</h1>
+            <h1 class="main-title-letter title-font">E</h1>
+            <h1 class="main-title-letter title-font">L</h1>
+            <h1 class="main-title-letter title-font">L</h1>
+            <h1 class="main-title-letter title-font">E</h1>
+            <h1 class="main-title-letter title-font">C</h1>
+            <h1 class="main-title-letter title-font">T</h1>
+        </span>
+        <nav class="navigation">
+            {% if session.user_id %}
+            <a class="nav-item" href="/">Reservations</a>
+            <a class="nav-item" href="/new-reservation">New reservation</a>
+            <a class="nav-item" href="/logout">Logout</a>
+            {% else %}
+            <a class="nav-item" href="/">Reservations</a>
+            <a class="nav-item" href="/register">Register</a>
+            <a class="nav-item" href="/login">Login</a>
+            {% endif %}
+            <a class="nav-item nav-icon" href="/search">
+                <span class="material-symbols-outlined">search</span>
+            </a>
+            {% if session.user_id %}
+            <a class="nav-item nav-icon" href="/user/{{session.username}}" class="user-link">
+                <span class="material-symbols-outlined">person</span>
+            </a>
+            {% endif %}
+        </nav>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="flash {{ category }}">
+                <p class="flash-message">{{ message }}</p>
+            </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <main class="content">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

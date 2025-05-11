@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/style/remove-reservation.css">
+{% endblock %}
+
+{% block title %}Remove "{{ reservation.title }}"{% endblock %}
+
+{% block content %}
+<h2 class="remove-reservation-title">Remove reservation</h2>
+
+<form class="remove-reservation-form" action="/reservation/{{ reservation.reservation_id }}/remove" method="post">
+    <span class="remove-text">Are you sure you want to remove "{{ reservation.title }}"</span>
+    <div class="remove-buttons-container">
+        <input class="button cancel-button" type="submit" name="remove" value="Cancel" />
+        <input class="button remove-button" type="submit" name="remove" value="Remove" />
+    </div>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+</form>
+{% endblock %}

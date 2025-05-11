@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/style/edit-reservation.css">
+{% endblock %}
+
+{% block title %}Edit "{{ reservation.title }}"{% endblock %}
+
+{% block content %}
+<h2 class="edit-reservation-title">Edit reservation</h2>
+
+<form class="edit-reservation-form" action="/reservation/{{ reservation.reservation_id }}/edit" method="post">
+    <div class="main-inputs-container">
+        <label class="main-input-label">
+            <p class="main-input-text">Title</p>
+            <input class="main-input" type="text" value="{{ reservation.title }}" name="title" required maxlength="50"/>
+        </label>
+        <label class="main-input-label">
+            <p class="main-input-text">Place</p>
+            <input class="main-input" type="text" value="{{ reservation.place }}" name="place" required maxlength="50"/>
+        </label>
+        <label class="main-input-label">
+            <p class="main-input-text">Date</p>
+            <input class="main-input" type="date" value="{{ reservation.date }}" name="date" required/>
+        </label>
+        <label class="main-input-label">
+            <p class="main-input-text">Time</p>
+            <input class="main-input" type="time" value="{{ reservation.time }}" name="time" required/>
+        </label>
+        <label class="main-input-label">
+            <p class="main-input-text">Duration</p>
+
+            {% set duration = reservation.duration %}
+            <select class="main-input" name="duration">
+                <option value="00:30" {% if duration == '00:30' %}selected{% endif %}>30 minutes</option>
+                <option value="01:00" {% if duration == '01:00' %}selected{% endif %}>1 hour</option>
+                <option value="01:30" {% if duration == '01:30' %}selected{% endif %}>1 hour 30 minutes</option>
+                <option value="02:00" {% if duration == '02:00' %}selected{% endif %}>2 hours</option>
+                <option value="02:30" {% if duration == '02:30' %}selected{% endif %}>2 hours 30 minutes</option>
+                <option value="03:00" {% if duration == '03:00' %}selected{% endif %}>3 hours</option>
+                <option value="03:30" {% if duration == '03:30' %}selected{% endif %}>3 hours 30 minutes</option>
+                <option value="04:00" {% if duration == '04:00' %}selected{% endif %}>4 hours</option>
+                <option value="04:30" {% if duration == '04:30' %}selected{% endif %}>4 hours 30 minutes</option>
+                <option value="05:00" {% if duration == '05:00' %}selected{% endif %}>5 hours</option>
+                <option value="05:30" {% if duration == '05:30' %}selected{% endif %}>5 hours 30 minutes</option>
+                <option value="06:00" {% if duration == '06:00' %}selected{% endif %}>6 hours</option>
+            </select>
+        </label>
+    </div>
+
+    <h2 class="tags-title">Tags</h2>
+    {% if allowed_tags %}
+    <div class="tags-container">
+        {% for tag in allowed_tags %}
+        <label class="tag-container">
+            {{ tag.tag }}
+            <input class="checkbox" type="checkbox" {% if tag in tags %}checked{% endif %} name="tag" value="{{ tag.tag }}">
+            <span class="checkmark-container">
+                <span class="checkmark material-symbols-outlined">check</span>
+            </span>
+        </label>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="no-tags">No tags available</p>
+    {% endif %}
+
+    <input class="button-small submit-button" type="submit" value="Submit"/>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+</form>
+{% endblock %}

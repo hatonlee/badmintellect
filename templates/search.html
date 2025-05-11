@@ -1,29 +1,106 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Search "{{ query }}"</title>
-</head>
-<body>
-    <!-- title -->
-    <h1> Search " {{ query }} "</h1>
+{% extends "layout.html" %}
 
-    <!-- search results -->
-    {% if not reservations %}
-    <h2>No reservations found.</h2>
-    {% else %}
-        {% for reservation in reservations %}
-        <p>
-            <a href="/reservation/{{ reservation.id }}"> {{ reservation.title }} </a>
-        </p>
-        {% endfor %}
+{% block head %}
+<link rel="stylesheet" href="/static/style/reservation-list.css">
+<link rel="stylesheet" href="/static/style/search.css">
+{% endblock %}
+
+{% block title %}Search{% endblock %}
+
+{% block content %}
+<h2 class="search-title">Search</h2>
+
+<form class="search-form" action="/search">
+    <div class="top-row">
+        <label class="search-item">
+            <span class="search-label-text">Title</span>
+            <input type="text" name="title" value="{% if not params.title == '%None%' %}{{ params.title[1:-1] }}{% endif %}"/>
+        </label>
+        <label class="search-item">
+            <span class="search-label-text">Place</span>
+            <input type="text" name="place" value="{% if not params.place == '%None%' %}{{ params.place[1:-1] }}{% endif %}"/>
+        </label>
+        <button class="button-icon search-button" type="submit">
+            <span class="material-symbols-outlined">search</span>
+        </button>
+    </div>
+    <div class="bottom-row">
+        <label class="search-item">
+            <span class="search-label-text">Date range</span>
+            <input class="search-item-time" type="date" name="date_start" value="{{ params.date_start }}"/>
+            <span class="search-label-hyphen"> - </span>
+            <input class="search-item-time" type="date" name="date_end" value="{{ params.date_end }}"/>
+        </label>
+        <label class="search-item">
+            <span class="search-label-text">Time range</span>
+            <input class="search-item-time" type="time" name="time_start" value="{{ params.time_start }}"/>
+            <span class="search-label-hyphen"> - </span>
+            <input class="search-item-time" type="time" name="time_end" value="{{ params.time_end }}"/>
+        </label>
+        <label class="search-item">
+            <span class="search-label-text">Duration range</span>
+
+            {% if params.duration_start %}
+                {% set duration_start = params.duration_start %}
+            {% else %}
+                {% set duration_start = '00:30' %}
+            {% endif %}
+            <select class="search-item-time" name="duration_start">
+                <option value="00:30" {% if duration_start == '00:30' %}selected{% endif %}>30 minutes</option>
+                <option value="01:00" {% if duration_start == '01:00' %}selected{% endif %}>1 hour</option>
+                <option value="01:30" {% if duration_start == '01:30' %}selected{% endif %}>1 hour 30 minutes</option>
+                <option value="02:00" {% if duration_start == '02:00' %}selected{% endif %}>2 hours</option>
+                <option value="02:30" {% if duration_start == '02:30' %}selected{% endif %}>2 hours 30 minutes</option>
+                <option value="03:00" {% if duration_start == '03:00' %}selected{% endif %}>3 hours</option>
+                <option value="03:30" {% if duration_start == '03:30' %}selected{% endif %}>3 hours 30 minutes</option>
+                <option value="04:00" {% if duration_start == '04:00' %}selected{% endif %}>4 hours</option>
+                <option value="04:30" {% if duration_start == '04:30' %}selected{% endif %}>4 hours 30 minutes</option>
+                <option value="05:00" {% if duration_start == '05:00' %}selected{% endif %}>5 hours</option>
+                <option value="05:30" {% if duration_start == '05:30' %}selected{% endif %}>5 hours 30 minutes</option>
+                <option value="06:00" {% if duration_start == '06:00' %}selected{% endif %}>6 hours</option>
+              </select>
+            <span class="search-label-hyphen"> - </span>
+            {% if params.duration_end %}
+                {% set duration_end = params.duration_end %}
+            {% else %}
+                {% set duration_end = '06:00' %}
+            {% endif %}
+            <select class="search-item-time" name="duration_end">
+                <option value="00:30" {% if duration_end == '00:30' %}selected{% endif %}>30 minutes</option>
+                <option value="01:00" {% if duration_end == '01:00' %}selected{% endif %}>1 hour</option>
+                <option value="01:30" {% if duration_end == '01:30' %}selected{% endif %}>1 hour 30 minutes</option>
+                <option value="02:00" {% if duration_end == '02:00' %}selected{% endif %}>2 hours</option>
+                <option value="02:30" {% if duration_end == '02:30' %}selected{% endif %}>2 hours 30 minutes</option>
+                <option value="03:00" {% if duration_end == '03:00' %}selected{% endif %}>3 hours</option>
+                <option value="03:30" {% if duration_end == '03:30' %}selected{% endif %}>3 hours 30 minutes</option>
+                <option value="04:00" {% if duration_end == '04:00' %}selected{% endif %}>4 hours</option>
+                <option value="04:30" {% if duration_end == '04:30' %}selected{% endif %}>4 hours 30 minutes</option>
+                <option value="05:00" {% if duration_end == '05:00' %}selected{% endif %}>5 hours</option>
+                <option value="05:30" {% if duration_end == '05:30' %}selected{% endif %}>5 hours 30 minutes</option>
+                <option value="06:00" {% if duration_end == '06:00' %}selected{% endif %}>6 hours</option>
+            </select>
+        </label>
+    </div>
+</form>
+
+{% if reservations %}
+{% include "reservation-list.html" %}
+{% else %}
+<p class="no-reservations">No reservations matched the search parameters</p>
+{% endif %}
+
+{% if reservations %}
+<form action="/search" class="page-navigation">
+    <!-- pass previous search parameters -->
+    {% for key, value in request.args.items() %}
+    {% if key != 'page' %}
+    <input type="hidden" name="{{ key }}" value="{{ value }}">
     {% endif %}
+    {% endfor %}
 
-
-    <!-- front page -->
-    <p>
-        <a href="/">Front page</a>
-    </p>
-</body>
-</html>
+    <button name=page value="{{ [1, page - 1] | max }}" class="navigation-button">&lt;&lt;</button>
+    <p class="current-page">{{ page }} / {{ page_count }}</p>
+    <button name=page value="{{ [page_count, page + 1] | min }}" class="navigation-button">&gt;&gt;</button>
+</form>
+{% endif %}
+{% endblock %}

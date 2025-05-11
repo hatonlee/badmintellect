@@ -1,43 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <!-- title -->
-    <h1>Sign up</h1>
+{% extends "layout.html" %}
 
-    <!-- flash -->
-    {% for message in get_flashed_messages() %}
-    <p>
-      <b>{{ message }}</b>
-    </p>
-    {% endfor %}
+{% block head %}
+<link rel="stylesheet" href="/static/style/register.css">
+{% endblock %}
 
-    <!-- form -->
-    <form action="/register" method="post">
-    <p>
-        <label for="username">Username</label>
-        <input type="text" name="username" value="{{ filled.username }}" required maxlength="25"/>
-    </p>
-    <p>
-        <label for="password_1">Password</label>
-        <input type="password" name="password_1" required maxlength="64"/>
-    </p>
-    <p>
-        <label for="password_2">Password again</label>
-        <input type="password" name="password_2" required maxlength="64"/>
-    </p>
-    <input type="submit" value="Sign Up"/>
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<h2 class="register-title">Register</h2>
+
+<form class="register-form" action="/register" method="post">
+    <div class="main-info-container">
+        <label class="register-form-label">
+            <span class="label-text">Username</span>
+            <input type="text" name="username" minlength="5" maxlength="25" placeholder="5-25 characters" value="{{ filled.username }}" required/>
+        </label>
+        <label class="register-form-label">
+            <span class="label-text">Password</span>
+            <input type="password" name="password_1" minlength="8" maxlength="64" placeholder="8-64 characters" required/>
+        </label>
+        <label class="register-form-label">
+            <span class="label-text">Password again</span>
+            <input type="password" name="password_2" minlength="8" maxlength="64" placeholder="8-64 characters" required/>
+        </label>
+    </div>
+    <input class="button-small submit-button" type="submit" value="Register"/>
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
-    <input type="hidden" name="next_page" value="{{ next_page }}" />
-    </form>
-    
-    <!-- front page -->
-    <p>
-        <a href="/">Front page</a>
-    </p>
-  </body>
-</html>
+    <input type="hidden" name="next_page" value="{{ next_page }}"/>
+</form>
+{% endblock %}

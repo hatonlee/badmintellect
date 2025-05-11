@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="/static/style/change-profile-picture.css">
+{% endblock %}
+
+{% block title %}Change profile picture{% endblock %}
+
+{% block content %}
+<h1 class="title">Change profile picture</h1>
+
+<div class="form-wrapper">
+    <div class="profile-picture-container">
+        {% if user.has_profile_picture %}
+        <img class="profile-picture" src="/user/{{ user.username }}/profile-picture" alt="Profile picture" height="128" width="128">
+        {% else %}
+        <img class="profile-picture" src="/static/images/default-profile-picture.jpg" alt="Profile picture" height="128" width="128">
+        {% endif %}
+    </div>
+    <form class="profile-picture-form" action="/user/{{ user.username }}/change-profile-picture" method="post" enctype="multipart/form-data">
+        <input class="file-input" type="file" name="profile-picture" accept=".jpg" required/>
+        <input class="button-small profile-picture-submit" type="submit" value="Submit"/>
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+.register-title {
+    place-self: center;
+}
+
+.register-form {
+    place-self: center;
+    display: grid;
+    gap: 1rem;
+}
+
+.main-info-container {
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    gap: 1rem;
+}
+
+.register-form-label {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: subgrid;
+    place-items: center start;
+}
+
+.submit-button {
+    place-self: center;
+}

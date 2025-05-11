@@ -1,40 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-</head>
-<body>
-    <!-- title -->
-    <h1>Login</h1>
+{% extends "layout.html" %}
 
-    <!-- flash -->
-    {% for message in get_flashed_messages() %}
-    <p>
-      <b>{{ message }}</b>
-    </p>
-    {% endfor %}
+{% block head %}
+<link rel="stylesheet" href="/static/style/login.css">
+{% endblock %}
 
-    <!-- login -->
-    <form action="/login" method="post">
-        <p>
-            <label for="title">Username</label>
-            <input type="text" name="username" value="{{ filled.username }}" required/>
-        </p>
-        <p>
-            <label for="title">Password</label>
-            <input type="password" name="password" required/>
-        </p>
-        <input type="submit" value="Login"/>
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
-        <input type="hidden" name="next_page" value="{{ next_page }}" />
+{% block title %}Login{% endblock %}
 
-    </form>
+{% block content %}
+<h2 class="login-title">Login</h2>
 
-    <!-- front page -->
-    <p>
-        <a href="/">Front page</a>
-    </p>
-  </body>
-</html>
+<form class="login-form" action="/login" method="post">
+    <div class="main-info-container">
+        <label class="login-form-label">
+            <span class="label-text">Username</span>
+            <input type="text" minlength="5" maxlength="25" name="username" value="{{ filled.username }}" required/>
+        </label>
+        <label class="login-form-label">
+            <span class="label-text">Password</span>
+            <input type="password" minlength="8" maxlength="64" name="password" required/>
+        </label>
+    </div>
+    <input class="button-small submit-button" type="submit" value="Login"/>
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+    <input type="hidden" name="next_page" value="{{ next_page }}" />
+</form>
+{% endblock %}

@@ -1,0 +1,199 @@
+.content {
+    padding: 2rem;
+}
+
+.heading {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto 1fr 1fr;
+}
+
+.reservation-title {
+    grid-column: 3 / 4;
+    text-align: center;
+}
+
+.reservation-creator {
+    grid-column: 4 / 5;
+    place-self: center start;
+    display: grid;
+    grid-auto-flow: column;
+    gap: 0.25rem;
+    margin: 0 0.5rem;
+}
+
+.modify-reservation {
+    grid-column: 5 / 6;
+    place-self: center end;
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+}
+
+.edit-icon, .remove-icon{
+    display: grid;
+    place-content: center;
+}
+
+.info-container {
+    place-self: center;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: auto;
+    gap: 1rem;
+}
+
+.info-item {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.25rem;
+    align-items: center;
+}
+
+.info-content {
+    overflow-wrap: anywhere;
+}
+
+.tag-container {
+    display: grid;
+    place-self: center;
+    gap: 1.5rem;
+    grid-auto-flow: column;
+    width: max-content;
+}
+
+.tag {
+    display: grid;
+    grid-auto-flow: column;
+    justify-content: center;
+    gap: 0.15rem;
+}
+
+.enroll {
+    place-self: center;
+}
+
+.enroll-button:hover {
+    text-decoration: underline;
+}
+
+.login-link {
+    place-self: center;
+}
+
+.comments-wrapper {
+    display: grid;
+    grid-template-rows: repeat(2, min-content) 1fr;
+    overflow-y: hidden;
+    gap: 1rem;
+}
+
+.new-comment-form {
+    display: grid;
+    grid-template-columns: repeat(2, max-content);
+    gap: 0.5rem;
+}
+
+.new-comment-label {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.new-comment-text {
+    width: max-content;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.new-comment-textarea {
+    resize: none;
+    width: 32rem;
+    height: 6rem;
+}
+
+.new-comment-submit {
+    place-self: end start;
+    background: var(--color-accent-1);
+}
+
+.comments {
+    display: grid;
+    align-content: start;
+    overflow-y: auto;
+    gap: 1rem;
+}
+
+.comment {
+    display: grid;
+    grid-template:
+    "pfp info" min-content
+    "pfp comment" 1fr /
+    min-content 1fr;
+    column-gap: 1rem;
+    height: max-content;
+}
+
+.profile-picture-container {
+    display: grid;
+    grid-area: pfp;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    height: max-content;
+}
+
+.comment-info {
+    grid-area: info;
+    display: grid;
+    grid-template-columns: repeat(4, max-content);
+    gap: 0.5rem;
+    place-items: center;
+}
+
+.badmin-badge {
+    place-self: center start;
+    padding: 0.1rem 0.5rem 0 0.5rem;
+    border-radius: 8px;
+    color: var(--color-bg-1);
+    background: var(--color-error);
+}
+
+.remove-button {
+    display: grid;
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+.remove-button:hover {
+    cursor: pointer;
+}
+
+.comment-content {
+    grid-area: comment;
+    word-wrap: break-word;
+    overflow: hidden;
+}
+
+.comment-navigation {
+    place-self: center;
+}
+
+.page-navigation {
+    display: grid;
+    grid-auto-flow: column;
+    gap: 1rem;
+    place-content: center;
+}
+
+.navigation-button {
+    color: var(--color-accent-1);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font-size: 1rem;
+}
+
+.navigation-button:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}

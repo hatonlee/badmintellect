@@ -1,67 +1,131 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ reservation.title }}</title>
-</head>
+{% extends "layout.html" %}
 
-<body>
-    <!-- title -->
-    <h1>{{ reservation.title }}</h1>
+{% block head %}
+<link rel="stylesheet" href="/static/style/reservation.css">
+{% endblock %}
 
-    <!-- info -->
-    <p>Start time: {{ reservation.start_time }} </p>
-    <p>End time: {{ reservation.end_time }} </p>
-    <p>Place: {{ reservation.place }} </p>
+{% block title %}{{ reservation.title }}{% endblock %}
 
-    <!-- tags -->
-    <p>
-        {% if tags %}
-            Tags: 
-            {% for tag in tags %}
-                {{tag.tag}}
-            {% endfor %}
-        {% else %}
-            No tags
+{% block content %}
+<div class="heading">
+    <h2 class="reservation-title">{{ reservation.title }}</h2>
+    <div class="reservation-creator">
+        <p>by</p>
+        <a href="/user/{{reservation.username}}">{{ reservation.username }}</a>
+    </div>
+    <div class="modify-reservation">
+        {% if reservation.user_id == session.user_id or session.user_role == 'badmin' %}
+        <a class="button-icon remove-icon" href="/reservation/{{ reservation.reservation_id }}/remove">
+            <span class="material-symbols-outlined">delete</span>
+        </a>
         {% endif %}
-    </p>
 
-    <!-- edit -->
-    {% if reservation.user_id == session.user_id %}
-    <p>
-        <a href="/edit/{{ reservation.id }}">Edit</a> |
-        <a href="/remove/{{ reservation.id }}">Remove</a>
-    </p>
-    {% endif %}
-
-    <!-- post a comment -->
-    {% if session.user_id %}
-    <h3>Create a new comment</h3>
-    <form action="/reservation/{{ reservation.id }}", method="post">
-        <textarea name="comment" id="comment" maxlength="1000" required></textarea>
-        <input type="submit" value="Post">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
-    </form>
-    {% else %}
-    <a href="/login">Login</a> or <a href="/register">Sign up</a> to comment.
-    {% endif %}
-
-    <!-- comments -->
-    <h2>Comments</h2>
-    <div>
-        {% if comments %}
-            {% for comment in comments %}
-                <p>{{ comment.comment | show_newlines }}</p>
-            {% endfor %}
-        {% else %}
-            No comments
+        {% if reservation.user_id == session.user_id %}
+        <a class="button-icon edit-icon" href="/reservation/{{ reservation.reservation_id }}/edit">
+            <span class="material-symbols-outlined">edit</span>
+        </a>
         {% endif %}
     </div>
+</div>
 
-    <!-- front page -->
-    <p>
-        <a href="/">Front page</a>
-    </p>
-</body>
-</html>
+<div class="tag-container">
+    {% for tag in tags %}
+    <div class="tag">
+        <span class="material-symbols-outlined">sell</span>
+        <p class="tag-name">{{ tag.tag }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="info-container">
+    <div class="info-item">
+        <span class="material-symbols-outlined">location_on</span>
+        <p class="info-content">{{ reservation.place }}</p>
+    </div>
+    <div class="info-item">
+        <span class="material-symbols-outlined">calendar_month</span>
+        <p class="info-content">{{ reservation.date }}</p>
+    </div>
+    <div class="info-item">
+        <span class="material-symbols-outlined">schedule</span>
+        <p class="info-content">{{ reservation.time }}</p>
+    </div>
+    <div class="info-item">
+        <span class="material-symbols-outlined">hourglass</span>
+        <p class="info-content">{{ reservation.duration }}</p>
+    </div>
+    <div class="info-item">
+        <span class="material-symbols-outlined">person</span>
+        <p class="info-content">{{ enrolled_count }}</p>
+    </div>
+</div>
+
+{% if session.user_id %}
+<form action="/reservation/{{reservation.reservation_id}}/enroll" method="post" class="enroll">
+    {% if is_enrolled %}
+    <button class="button enroll-button unenroll" name=enroll_button value="unenroll">Unenroll</button>
+    {% else %}
+    <button class="button enroll-button" name=enroll_button value="enroll">Enroll</button>
+    {% endif %}
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+</form>
+{% else %}
+<a href="/login" class="login-link">Login to enroll</a>
+{% endif %}
+
+{% if session.user_id and is_enrolled %}
+<div class="comments-wrapper">
+    <h2 class="comments-title">Comments</h2>
+    <form class="new-comment-form" action="/reservation/{{ reservation.reservation_id }}/add-comment", method="post">
+        <label class="new-comment-label">
+            <p class="new-comment-text">New comment</p>
+            <textarea class="new-comment-textarea" name="comment" maxlength="1000" required></textarea>
+        </label>
+        <input class="button-small new-comment-submit" type="submit" value="Post">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+    </form>
+
+    <div class="comments">
+    {% if comments %}
+        {% for comment in comments %}
+        <div class="comment">
+            <div class="profile-picture-container">
+                {% if comment.has_profile_picture %}
+                <img class="profile-picture" src="/user/{{ comment.username }}/profile-picture" alt="Profile picture" height="64" width="64">
+                {% else %}
+                <img class="profile-picture" src="/static/images/default-profile-picture.jpg" alt="Profile picture" height="64" width="64">
+                {% endif %}
+            </div>
+
+            <div class="comment-info">
+                {% if comment.user_role == 'badmin' %}
+                <p class="badmin-badge title-font">BADMIN</p>
+                {% endif %}
+                <a class="username" href="/user/{{ comment.username }}">{{ comment.username }}</a>
+                <p class="post-time">{{ comment.post_time }}</p>
+                {% if comment.user_id | string() == session.user_id | string() or session.user_role == 'badmin' %}
+                <form class="remove-form" action="/reservation/{{ reservation.reservation_id }}/remove-comment" method="POST">
+                    <button type="submit" name="comment_id" value="{{ comment.comment_id }}" class="remove-button">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+                </form>
+                {% endif %}
+            </div>
+            <p class="comment-content">{{ comment.comment | show_newlines }}</p>
+        </div>
+        {% endfor %}
+
+    <form class="page-navigation" action="/reservation/{{ reservation.reservation_id }}">
+        <button class="navigation-button" name=page value="{{ [1, page - 1] | max }}">&lt;&lt;</button>
+        <p class="current-page">{{ page }} / {{ page_count }}</p>
+        <button class="navigation-button" name=page value="{{ [page_count, page + 1] | min }}">&gt;&gt;</button>
+    </form>
+
+    {% else %}
+    <p class="no-comments">No comments</p>
+    {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

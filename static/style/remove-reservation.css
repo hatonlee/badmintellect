@@ -1,0 +1,19 @@
+.remove-reservation-title {
+    place-self: center;
+}
+
+.remove-reservation-form {
+    display: grid;
+    place-items: center;
+    gap: 1rem;
+}
+
+.remove-buttons-container {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    gap: 1rem;
+}
+
+.remove-button {
+    background: var(--color-error);
+}

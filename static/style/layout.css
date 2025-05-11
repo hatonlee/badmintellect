@@ -1,0 +1,241 @@
+:root {
+    color-scheme: dark;
+
+    --color-bg-1: #1e1e1e;
+    --color-bg-2: #2d2d2d;
+    --color-text-1: #ddd;
+
+    --color-accent-1: #e29abe;
+    --color-title-1: #ff6ec4;
+    --color-title-2: #7873f5;
+
+    --color-success: #4ade80;
+    --color-error: #f87171;
+}
+
+::selection {
+    color: var(--color-bg-1);
+    background: var(--color-text-1);
+}
+
+@keyframes slide-in {
+    from {
+        transform: translateX(calc(100% + 1.5rem));
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+@keyframes slide-out {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(calc(100% + 1.5rem));
+    }
+}
+
+@keyframes gradient {
+    from {
+        background-position-x: 0%;
+    }
+    to {
+        background-position-x: 200%;
+    }
+}
+
+* {
+    font-family: "Exo 2", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    color: var(--color-text-1);
+}
+
+.title-font {
+    font-family: "Bebas Neue", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.material-symbols-outlined {
+    user-select: none;
+}
+
+body {
+    display: grid;
+    margin: 0;
+    background-color: var(--color-bg-1);
+    background-image: url(/static/images/background.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+}
+
+a:not(.button-icon) {
+    position: relative;
+    width: max-content;
+    color: var(--color-accent-1);
+    text-decoration: none;
+}
+
+a:not(.button-icon)::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-title-1), var(--color-title-2));
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s ease;
+}
+
+a:not(.button-icon):hover::after {
+    transform-origin: left;
+    transform: scaleX(1);
+}
+
+p, h1, h2, h3 {
+    margin: 0;
+}
+
+input[type=text], input[type=date], input[type=time], input[type=password], select, textarea {
+    background: var(--color-bg-1);
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem;
+}
+
+textarea {
+    padding: 1rem;
+}
+
+.button, .button-small, .button-icon {
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+
+.button:active, .button-small:active, .button-icon:active {
+    transform: scale(0.9);
+}
+
+.button {
+    padding: 0.75rem 1.5rem;
+    color: var(--color-bg-1);
+    background: var(--color-accent-1);
+}
+
+.button-small {
+    padding: 0.5rem 1rem;
+    color: var(--color-bg-1);
+    background: var(--color-accent-1);
+}
+
+.button-icon {
+    padding: 4px;
+    text-decoration: none;
+}
+
+.banner {
+    display: grid;
+}
+
+.main-title {
+    place-self: end center;
+    margin: 3rem 0 1rem 0;
+    display: grid;
+    grid-auto-flow: column;
+    user-select: none;
+    background: linear-gradient(90deg, var(--color-title-1), var(--color-title-2), var(--color-title-1), var(--color-title-2));
+    background-size: 200% 100%;
+    background-clip: text;
+    animation: gradient 3s linear infinite;
+}
+
+.main-title-letter {
+    place-self: center;
+    transition: color 0.4s ease, margin 2s ease;
+    font-size: 7rem;
+    color: var(--color-text-1);
+}
+
+.main-title.badmin-title > .main-title-letter:nth-child(-n+6) {
+    color: var(--color-error);
+}
+
+.main-title:hover .main-title-letter {
+    margin: 0 0.5rem;
+    color: transparent;
+}
+
+.main-title.badmin-title:hover .main-title-letter {
+    color: transparent;
+}
+
+.navigation {
+    place-self: end center;
+    display: grid;
+    grid-auto-flow: column;
+    background: var(--color-bg-2);
+    box-shadow: 0.5rem 0.5rem var(--color-accent-1);
+}
+
+.nav-item {
+    font-size: 1.5rem;
+    padding: 1rem;
+}
+
+.nav-item::after {
+    bottom: unset;
+    top: 0;
+}
+
+.nav-icon {
+    display: grid;
+    place-content: center;
+    text-decoration: none;
+}
+
+.content {
+    justify-self: center;
+    display: grid;
+    gap: 1rem;
+    max-width: 70rem;
+    min-width: 50rem;
+    margin: 2rem;
+    padding: 1rem;
+    background: var(--color-bg-2);
+    box-shadow: 0.5rem 0.5rem var(--color-accent-1);
+}
+
+.flash {
+    position: fixed;
+    display: grid;
+    place-content: center;
+    top: 1.5rem;
+    right: 1.5rem;
+    padding: 1rem;
+    background: var(--color-bg-2);
+    box-shadow: 0.5rem 0.5rem var(--color-accent-1);
+    max-width: 15vw;
+    animation: slide-in 1s ease-out forwards, slide-out 1s ease-in 5s forwards;
+}
+
+.flash.success {
+    box-shadow: 0.5rem 0.5rem var(--color-success);
+}
+
+.flash.error {
+    box-shadow: 0.5rem 0.5rem var(--color-error);
+}
+
+.flash-message {
+    text-wrap: wrap;
+}
