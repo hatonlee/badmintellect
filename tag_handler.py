@@ -1,45 +1,52 @@
 import db
 
-# get tags of a reservation
 def get_tags(reservation_id):
     sql = """SELECT tag
-             FROM tags
-             WHERE reservation_id = ?"""
-    return db.query(sql, [reservation_id])
+               FROM tags
+              WHERE reservation_id = ?"""
 
-# add a tag into a reservation
-def add_tag(tag, reservation_id):
-    sql = """INSERT INTO tags (tag, reservation_id)
+    return db.query(sql, (reservation_id,))
+
+def get_tag(tag_id):
+    sql = """SELECT tag
+               FROM tags
+              WHERE tag_id = ?"""
+
+    result = db.query(sql, (tag_id,))
+    return result[0] if result else None
+
+def add_tag(reservation_id, tag):
+    sql = """INSERT INTO tags (reservation_id, tag)
              VALUES (?, ?)"""
-    db.execute(sql, [tag, reservation_id])
 
+    db.execute(sql, (reservation_id, tag))
     tag_id = db.last_insert_id()
     return tag_id
 
-# remove a tag from a reservation
-def remove_tag(tag, reservation_id):
+def remove_tags(reservation_id, tag):
     sql = """DELETE FROM tags
-             WHERE tag LIKE ? AND reservation_id = ?"""
-    db.execute(sql, [tag, reservation_id])
+              WHERE reservation_id LIKE ? AND tag LIKE ?"""
 
-# get all allowed tags
-def get_allowed():
+    db.execute(sql, (reservation_id, tag))
+
+def get_allowed_tags():
     sql = """SELECT tag
-             FROM allowed_tags"""
+               FROM allowed_tags"""
+
     result = db.query(sql)
     return result if result else None
 
-# check if a tag is allowed
 def is_allowed(tag):
     sql = """SELECT tag
-             FROM allowed_tags
-             WHERE tag = ?"""
-    return bool(db.query(sql, [tag]))
+               FROM allowed_tags
+              WHERE tag = ?"""
 
-# add a new allowed tag
-def add_allowed(tag):
+    return bool(db.query(sql, (tag,)))
+
+def add_allowed_tag(tag):
     sql = """INSERT INTO allowed_tags (tag)
              VALUES (?)"""
-    db.execute(sql, [tag])
+
+    db.execute(sql, (tag,))
     tag_id = db.last_insert_id()
     return tag_id
