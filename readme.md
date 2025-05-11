@@ -1,3 +1,5 @@
+![Site banner](/static/images/banner.png)
+
 # badmintellect
 *The smarter badminton reservation site*
 
@@ -8,7 +10,7 @@
 * Add tags to your reservations to personalize them.
 * Enroll in reservations to chat with others.
 
-## Using the application for development
+## Using the application
 1. Install [Flask](https://flask.palletsprojects.com/)
 2. Run the `init.py` initialization script
 3. Start the flask server
