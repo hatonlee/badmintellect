@@ -56,7 +56,7 @@ def give_badmin(cursor):
     result = end_time - start_time
     return f"[ OK ] badmin ({result:.3f}s)"
 
-def create_test_data(cursor, user_count=10**3, reservation_count=10**5, comment_count=10**6, enrollment_count=10**4):
+def create_test_data(cursor, user_count=10**3, reservation_count=10**5, comment_count=10**6, enrollment_count=10**5):
     start_time = time()
 
     epoch = datetime(1970, 1, 1)
@@ -93,12 +93,11 @@ def create_test_data(cursor, user_count=10**3, reservation_count=10**5, comment_
         sql = """INSERT INTO comments (user_id, reservation_id, comment, post_time)
                  VALUES (?, ?, ?, ?)"""
 
-        for i in range(1, comment_count + 1):
+        for _ in range(1, comment_count + 1):
             # random datetime
             seconds = random.randint(0, int((now - epoch).total_seconds()))
             random_datetime = (epoch + timedelta(seconds=seconds)).strftime("%Y-%m-%d %H:%M")
-
-            cursor.execute(sql, (random.randint(1, user_count + 1), random.randint(1, reservation_count + 1), f"Comment {i}", random_datetime))
+            cursor.execute(sql, (random.randint(1, user_count), random.randint(1, reservation_count), f"Comment {i}", random_datetime))
 
         sql = """INSERT INTO enrollments (user_id, reservation_id)
                       VALUES (?, ?)"""
@@ -116,6 +115,29 @@ def create_test_data(cursor, user_count=10**3, reservation_count=10**5, comment_
     result = end_time - start_time
     return f"[ OK ] testdata ({result:.3f}s)"
 
+def show_performance_results():
+    performance_results = """
+App tested with the following datasets
+User count: 10 ** 3
+Reservation count: 10 ** 5
+Comment count: 10 ** 6
+Enrollment count: 10 ** 4
+
+Load times:
+Front page: ms
+Search: 40ms with all parameters
+
+User count: 10 ** 4
+Reservation count: 10 ** 5
+Comment count: 10 ** 8
+Enrollment count: 10 ** 5
+
+Load times:
+Front page: 60ms
+Search: 100ms with all parameters"""
+
+    print(performance_results)
+
 def init_cli():
     action = input(">>> ")
 
@@ -123,9 +145,11 @@ def init_cli():
     cursor = con.cursor()
 
     match action:
-        case "7":
+        case "8":
             con.close()
             sys.exit()
+        case "7":
+            show_performance_results()
         case "6":
             print(give_badmin(cursor))
         case "5":
@@ -156,7 +180,9 @@ if __name__ == "__main__":
 [4] Create test data
 [5] Run 1 - 4
 [6] Give badmin role to all users (development only)
-[7] Exit"""
+[7] Show performance test results
+[8] Exit"""
+
     print(prompt)
     while True:
         init_cli()
