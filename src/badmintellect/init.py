@@ -3,16 +3,16 @@ import sys
 import random
 from time import time
 from datetime import datetime, timedelta
+from pathlib import Path
+
+BASE_DIR = Path(__file__).parent
 
 def run_schema(cursor):
     start_time = time()
 
-    try:
-        with open("schema.sql", "r") as f:
-            schema_script = f.read()
-            cursor.executescript(schema_script)
-    except (FileNotFoundError, sqlite3.OperationalError):
-        return "[ ERROR ] schema.sql"
+    with open(BASE_DIR / "schema.sql", "r") as f:
+        schema_script = f.read()
+        cursor.executescript(schema_script)
 
     end_time = time()
     result = end_time - start_time
@@ -21,12 +21,9 @@ def run_schema(cursor):
 def run_index(cursor):
     start_time = time()
 
-    try:
-        with open("index.sql", "r") as f:
-            index_script = f.read()
-            cursor.executescript(index_script)
-    except (FileNotFoundError, sqlite3.OperationalError):
-        return "[ ERROR ] index.sql"
+    with open(BASE_DIR / "index.sql", "r") as f:
+        index_script = f.read()
+        cursor.executescript(index_script)
 
     end_time = time()
     result = end_time - start_time
@@ -35,12 +32,9 @@ def run_index(cursor):
 def run_init(cursor):
     start_time = time()
 
-    try:
-        with open("init.sql", "r") as f:
-            init_script = f.read()
-            cursor.executescript(init_script)
-    except (FileNotFoundError, sqlite3.OperationalError):
-        return "[ ERROR ] init.sql"
+    with open(BASE_DIR / "init.sql", "r") as f:
+        init_script = f.read()
+        cursor.executescript(init_script)
 
     end_time = time()
     result = end_time - start_time
@@ -171,7 +165,7 @@ def init_cli():
     con.commit()
     con.close()
 
-if __name__ == "__main__":
+def main():
     prompt = """
 --- App init tool ---
 [1] Run schema.sql (DROPS EVERYTHING)
@@ -186,3 +180,6 @@ if __name__ == "__main__":
     print(prompt)
     while True:
         init_cli()
+
+if __name__ == "__main__":
+    main()

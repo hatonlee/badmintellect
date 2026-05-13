@@ -1,4 +1,4 @@
-import db
+from . import db
 
 def get_reservations(page=1, page_size=25, params=None, **kwargs):
     combined = {}

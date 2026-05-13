@@ -1,4 +1,4 @@
-import db
+from . import db
 
 def get_enrolled_users(reservation_id):
     sql = """SELECT u.user_id, u.username

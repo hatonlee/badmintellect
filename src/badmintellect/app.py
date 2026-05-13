@@ -1,7 +1,7 @@
 import sqlite3
 from flask import Flask
 from flask import redirect, render_template, request, session, abort, make_response, flash, url_for
-import res_handler, usr_handler, tag_handler, com_handler, enr_handler, config
+from . import res_handler, usr_handler, tag_handler, com_handler, enr_handler, config
 import secrets, markupsafe
 from datetime import datetime, timedelta
 import math

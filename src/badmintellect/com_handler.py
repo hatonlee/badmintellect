@@ -1,4 +1,4 @@
-import db
+from . import db
 
 def get_comments(reservation_id, page=1, page_size=10):
     sql = """SELECT c.comment_id, c.user_id, c.comment, c.post_time, u.username, u.user_role,u.profile_picture IS NOT NULL AS has_profile_picture
@@ -41,7 +41,7 @@ def remove_comments(reservation_id):
     sql = """DELETE FROM comments
               WHERE reservation_id = ?"""
 
-    db.execute(sql, (reservation_id, ))
+    db.execute(sql, (reservation_id))
 
 def remove_comment(comment_id):
     sql = """DELETE FROM comments
