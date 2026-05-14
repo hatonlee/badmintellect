@@ -1,5 +1,6 @@
 from . import db
 
+
 def get_tags(reservation_id):
     sql = """SELECT tag
                FROM tags

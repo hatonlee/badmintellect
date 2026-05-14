@@ -1,5 +1,7 @@
 from werkzeug.security import check_password_hash, generate_password_hash
+
 from . import db
+
 
 def get_users(user_id="%", username="%"):
     sql = """SELECT u.user_id, u.username, u.user_role, u.profile_picture IS NOT NULL AS has_profile_picture, COUNT(r.reservation_id) AS reservation_count
@@ -63,4 +65,4 @@ def give_role(user_id, role):
                 SET user_role = ?
               WHERE user_id = ?"""
 
-    db.execute(sql, (profile_picture, user_id))
+    db.execute(sql, (role, user_id))

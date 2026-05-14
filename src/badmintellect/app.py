@@ -1,10 +1,21 @@
-import sqlite3
-from flask import Flask
-from flask import redirect, render_template, request, session, abort, make_response, flash, url_for
-from . import res_handler, usr_handler, tag_handler, com_handler, enr_handler, config
-import secrets, markupsafe
-from datetime import datetime, timedelta
 import math
+import secrets
+from datetime import datetime, timedelta
+
+import markupsafe
+from flask import (
+    Flask,
+    abort,
+    flash,
+    make_response,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
+
+from . import com_handler, config, enr_handler, res_handler, tag_handler, usr_handler
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -117,7 +128,6 @@ def add_comment(reservation_id):
         abort(400)
 
     comment = comment.strip()
-    comment_id = com_handler.add_comment(reservation_id, session.get("user_id"), comment)
 
     return redirect(url_for("reservation", reservation_id=reservation_id))
 
@@ -129,8 +139,7 @@ def remove_comment(reservation_id):
     # get form information
     comment_id = request.form["comment_id"]
 
-    # only commenter or badmin can remove the comment
-    comment = com_handler.get_comment(comment_id)
+    # TODO: only commenter or badmin can remove the comment
 
     com_handler.remove_comment(comment_id)
     return redirect(url_for("reservation", reservation_id=reservation_id))

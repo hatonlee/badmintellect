@@ -1,5 +1,7 @@
 import sqlite3
+
 from flask import g
+
 
 def get_connection():
     with sqlite3.connect("database.db") as con:

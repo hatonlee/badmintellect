@@ -1,9 +1,9 @@
+import random
 import sqlite3
 import sys
-import random
-from time import time
 from datetime import datetime, timedelta
 from pathlib import Path
+from time import time
 
 BASE_DIR = Path(__file__).parent
 
