@@ -12,3 +12,11 @@ dependencies = [
 
 [project.scripts]
 init = "badmintellect.init:main"
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.12",
+]
+
+[tool.ruff.lint]
+extend-select = ["I"]
