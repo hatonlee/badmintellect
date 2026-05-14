@@ -1,7 +1,11 @@
+import sqlite3
+
 from . import db
 
 
-def get_comments(reservation_id, page=1, page_size=10):
+def get_comments(
+    reservation_id: int, page: int = 1, page_size: int = 10
+) -> list[sqlite3.Row] | None:
     sql = """SELECT c.comment_id, c.user_id, c.comment, c.post_time, u.username, u.user_role,u.profile_picture IS NOT NULL AS has_profile_picture
                FROM comments AS c
                JOIN users AS u ON c.user_id = u.user_id
@@ -15,7 +19,7 @@ def get_comments(reservation_id, page=1, page_size=10):
     return result if result else None
 
 
-def get_comment(comment_id):
+def get_comment(comment_id: int) -> sqlite3.Row | None:
     sql = """SELECT comment_id, user_id, reservation_id, comment, post_time
                FROM comments
               WHERE comment_id = ?"""
@@ -24,16 +28,16 @@ def get_comment(comment_id):
     return result[0] if result else None
 
 
-def comment_count(reservation_id):
+def comment_count(reservation_id: int) -> int:
     sql = """SELECT COUNT(*)
                FROM comments
               WHERE reservation_id = ?"""
 
     result = db.query(sql, (reservation_id,))
-    return int(result[0][0]) if result else None
+    return int(result[0][0]) if result else 0
 
 
-def add_comment(reservation_id, user_id, comment):
+def add_comment(reservation_id: int, user_id: int, comment: str) -> int:
     sql = """INSERT INTO comments (reservation_id, user_id, comment, post_time)
              VALUES (?, ?, ?, datetime('now'))"""
 
@@ -42,14 +46,14 @@ def add_comment(reservation_id, user_id, comment):
     return comment_id
 
 
-def remove_comments(reservation_id):
+def remove_comments(reservation_id: int) -> None:
     sql = """DELETE FROM comments
               WHERE reservation_id = ?"""
 
-    db.execute(sql, (reservation_id))
+    db.execute(sql, (reservation_id,))
 
 
-def remove_comment(comment_id):
+def remove_comment(comment_id: int) -> None:
     sql = """DELETE FROM comments
               WHERE comment_id = ?"""
 

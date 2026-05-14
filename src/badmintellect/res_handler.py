@@ -1,7 +1,15 @@
+import sqlite3
+from collections.abc import Mapping
+
 from . import db
 
 
-def get_reservations(page=1, page_size=25, params=None, **kwargs):
+def get_reservations(
+    page: int = 1,
+    page_size: int = 25,
+    params: Mapping[str, object] | None = None,
+    **kwargs: object,
+) -> list[sqlite3.Row] | None:
     combined = {}
     if params:
         params = {k: v for k, v in params.items() if v not in (None, "")}
@@ -49,7 +57,10 @@ def get_reservations(page=1, page_size=25, params=None, **kwargs):
     return result if result else None
 
 
-def reservation_count(params=None, **kwargs):
+def reservation_count(
+    params: Mapping[str, object] | None = None,
+    **kwargs: object,
+) -> int:
     combined = {}
     if params:
         params = {k: v for k, v in params.items() if v not in (None, "")}
@@ -83,10 +94,10 @@ def reservation_count(params=None, **kwargs):
 
     combined = tuple(combined.values())
     result = db.query(sql, combined)
-    return int(result[0][0]) if result else None
+    return int(result[0][0]) if result else 0
 
 
-def get_reservation(reservation_id):
+def get_reservation(reservation_id: int) -> sqlite3.Row | None:
     sql = """SELECT r.reservation_id, r.user_id, r.title, r.place, r.date, r.time, r.duration, u.username
                FROM reservations AS r
                JOIN users AS u on r.user_id = u.user_id
@@ -96,7 +107,10 @@ def get_reservation(reservation_id):
     return result[0] if result else None
 
 
-def add_reservation(params=None, **kwargs):
+def add_reservation(
+    params: Mapping[str, object] | None = None,
+    **kwargs: object,
+) -> int:
     combined = {}
     if params:
         combined.update(params)
@@ -112,7 +126,10 @@ def add_reservation(params=None, **kwargs):
     return reservation_id
 
 
-def update_reservation(params=None, **kwargs):
+def update_reservation(
+    params: Mapping[str, object] | None = None,
+    **kwargs: object,
+) -> None:
     combined = {}
     if params:
         combined.update(params)
@@ -127,7 +144,7 @@ def update_reservation(params=None, **kwargs):
     db.execute(sql, combined)
 
 
-def remove_reservation(reservation_id):
+def remove_reservation(reservation_id: int) -> None:
     sql = """DELETE FROM reservations
               WHERE reservation_id = ?"""
 

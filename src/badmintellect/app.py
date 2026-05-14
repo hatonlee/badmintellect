@@ -14,6 +14,7 @@ from flask import (
     session,
     url_for,
 )
+from flask.typing import ResponseReturnValue
 
 from . import com_handler, config, enr_handler, res_handler, tag_handler, usr_handler
 
@@ -21,27 +22,41 @@ app = Flask(__name__)
 app.secret_key = config.secret_key
 
 
-def require_login():
+def require_login() -> None:
     if not session.get("user_id"):
         abort(401)
 
 
-def check_csrf():
+def current_user_id() -> int:
+    user_id = session.get("user_id")
+    if not isinstance(user_id, int):
+        abort(401)
+    return user_id
+
+
+def current_user_role() -> str | None:
+    user_role = session.get("user_role")
+    if not isinstance(user_role, str):
+        return None
+    return user_role
+
+
+def check_csrf() -> None:
     if request.form.get("csrf_token") != session.get("csrf_token"):
         abort(403)
 
 
-def require_owner(user_id):
+def require_owner(user_id: int) -> None:
     if user_id != session.get("user_id"):
         abort(403)
 
 
-def require_modify(user_id):
+def require_modify(user_id: int) -> None:
     if int(user_id) != session.get("user_id") and session.get("user_role") != "badmin":
         abort(403)
 
 
-def is_valid_date(date):
+def is_valid_date(date: str) -> bool:
     try:
         datetime.strptime(date, "%Y-%m-%d")
         return True
@@ -49,7 +64,7 @@ def is_valid_date(date):
         return False
 
 
-def is_valid_time(time):
+def is_valid_time(time: str) -> bool:
     try:
         datetime.strptime(time, "%H:%M")
         return True
@@ -57,7 +72,7 @@ def is_valid_time(time):
         return False
 
 
-def parse_duration(duration):
+def parse_duration(duration: str) -> timedelta | None:
     try:
         hours, minutes = map(int, duration.split(":"))
         return timedelta(hours=hours, minutes=minutes)
@@ -65,25 +80,29 @@ def parse_duration(duration):
         return None
 
 
-def is_valid_duration(duration, min_duration="00:30", max_duration="06:00"):
-    duration = parse_duration(duration)
-    if duration is None:
+def is_valid_duration(
+    duration: str, min_duration: str = "00:30", max_duration: str = "06:00"
+) -> bool:
+    parsed_duration = parse_duration(duration)
+    if parsed_duration is None:
         return False
 
-    min_duration = parse_duration(min_duration)
-    max_duration = parse_duration(max_duration)
-    return min_duration <= duration <= max_duration
+    min_parsed_duration = parse_duration(min_duration)
+    max_parsed_duration = parse_duration(max_duration)
+    if min_parsed_duration is None or max_parsed_duration is None:
+        return False
+    return min_parsed_duration <= parsed_duration <= max_parsed_duration
 
 
 @app.template_filter()
-def show_newlines(content):
+def show_newlines(content: object) -> markupsafe.Markup:
     content = str(markupsafe.escape(content))
     content = content.replace("\n", "<br>")
     return markupsafe.Markup(content)
 
 
 @app.route("/")
-def index():
+def index() -> ResponseReturnValue:
     # pagination
     page_size = 25
     reservation_count = res_handler.reservation_count()
@@ -101,7 +120,7 @@ def index():
 
 
 @app.route("/reservation/<int:reservation_id>")
-def reservation(reservation_id):
+def reservation(reservation_id: int) -> ResponseReturnValue:
     reservation = res_handler.get_reservation(reservation_id)
     if not reservation:
         abort(404)
@@ -126,7 +145,7 @@ def reservation(reservation_id):
             reservation_id, page=page, page_size=page_size
         )
         params["is_enrolled"] = enr_handler.is_enrolled(
-            session.get("user_id"), reservation_id
+            current_user_id(), reservation_id
         )
         params["enrolled_count"] = enr_handler.enrolled_users_count(reservation_id)
 
@@ -134,9 +153,11 @@ def reservation(reservation_id):
             "reservation.html", page=page, page_count=page_count, **params
         )
 
+    abort(405)
+
 
 @app.route("/reservation/<int:reservation_id>/add-comment", methods=["POST"])
-def add_comment(reservation_id):
+def add_comment(reservation_id: int) -> ResponseReturnValue:
     require_login()
     check_csrf()
 
@@ -148,12 +169,13 @@ def add_comment(reservation_id):
         abort(400)
 
     comment = comment.strip()
+    com_handler.add_comment(reservation_id, current_user_id(), comment)
 
     return redirect(url_for("reservation", reservation_id=reservation_id))
 
 
 @app.route("/reservation/<int:reservation_id>/remove-comment", methods=["POST"])
-def remove_comment(reservation_id):
+def remove_comment(reservation_id: int) -> ResponseReturnValue:
     require_login()
     check_csrf()
 
@@ -162,12 +184,12 @@ def remove_comment(reservation_id):
 
     # TODO: only commenter or badmin can remove the comment
 
-    com_handler.remove_comment(comment_id)
+    com_handler.remove_comment(int(comment_id))
     return redirect(url_for("reservation", reservation_id=reservation_id))
 
 
 @app.route("/reservation/<int:reservation_id>/enroll", methods=["POST"])
-def enroll(reservation_id):
+def enroll(reservation_id: int) -> ResponseReturnValue:
     require_login()
     check_csrf()
 
@@ -175,18 +197,18 @@ def enroll(reservation_id):
     value = request.form["enroll_button"]
 
     if value == "enroll":
-        enr_handler.enroll_user(session.get("user_id"), reservation_id)
+        enr_handler.enroll_user(current_user_id(), reservation_id)
         flash("Enrolled succesfully", "success")
 
     if value == "unenroll":
-        enr_handler.unenroll_users(session.get("user_id"), reservation_id)
+        enr_handler.unenroll_user(current_user_id(), reservation_id)
         flash("Unenrolled succesfully", "success")
 
     return redirect(url_for("reservation", reservation_id=reservation_id))
 
 
 @app.route("/new-reservation", methods=["GET", "POST"])
-def new_reservation():
+def new_reservation() -> ResponseReturnValue:
     require_login()
 
     if request.method == "GET":
@@ -197,7 +219,7 @@ def new_reservation():
         check_csrf()
 
         # get form information
-        params = {"user_id": session.get("user_id")}
+        params = {"user_id": str(current_user_id())}
         params.update({k: v for k, v in request.form.items() if v.strip()})
         params.pop("tag", None)
         params.pop("csrf_token", None)
@@ -215,8 +237,8 @@ def new_reservation():
                     params["duration"],
                 )
             )
-            or len(str(params["title"])) > 50
-            or len(str(params["place"])) > 50
+            or len(params["title"]) > 50
+            or len(params["place"]) > 50
             or not is_valid_date(params["date"])
             or not is_valid_time(params["time"])
             or not is_valid_duration(params["duration"])
@@ -237,9 +259,11 @@ def new_reservation():
         flash("Reservation added succesfully", "success")
         return redirect(url_for("reservation", reservation_id=reservation_id))
 
+    abort(405)
+
 
 @app.route("/reservation/<int:reservation_id>/edit", methods=["GET", "POST"])
-def edit_reservation(reservation_id):
+def edit_reservation(reservation_id: int) -> ResponseReturnValue:
     require_login()
 
     reservation = res_handler.get_reservation(reservation_id)
@@ -263,7 +287,7 @@ def edit_reservation(reservation_id):
 
         # get form information
         params = {k: v for k, v in request.form.items() if v.strip()}
-        params["reservation_id"] = reservation_id
+        params["reservation_id"] = str(reservation_id)
         params.pop("tag", None)
         params.pop("csrf_token", None)
 
@@ -302,9 +326,11 @@ def edit_reservation(reservation_id):
         flash("Reservation edited succesfully", "success")
         return redirect(url_for("reservation", reservation_id=reservation_id))
 
+    abort(405)
+
 
 @app.route("/reservation/<int:reservation_id>/remove", methods=["GET", "POST"])
-def remove_reservation(reservation_id):
+def remove_reservation(reservation_id: int) -> ResponseReturnValue:
     require_login()
 
     reservation = res_handler.get_reservation(reservation_id)
@@ -323,7 +349,7 @@ def remove_reservation(reservation_id):
         if action == "Remove":
             tag_handler.remove_tags(reservation_id, "%")
             com_handler.remove_comments(reservation_id)
-            enr_handler.unenroll_users("%", reservation_id)
+            enr_handler.unenroll_all_users(reservation_id)
             res_handler.remove_reservation(reservation["reservation_id"])
 
             flash("Reservation removed succesfully", "success")
@@ -333,9 +359,11 @@ def remove_reservation(reservation_id):
             flash("Reservation not removed", "error")
             return redirect(url_for("reservation", reservation_id=reservation_id))
 
+    abort(405)
+
 
 @app.route("/register", methods=["GET", "POST"])
-def register():
+def register() -> ResponseReturnValue:
     if request.method == "GET":
         return render_template("register.html", filled={}, next_page=request.referrer)
 
@@ -393,9 +421,11 @@ def register():
         else:
             return redirect(next_page)
 
+    abort(405)
+
 
 @app.route("/login", methods=["GET", "POST"])
-def login():
+def login() -> ResponseReturnValue:
     if request.method == "GET":
         return render_template("login.html", filled={}, next_page=request.referrer)
 
@@ -414,6 +444,8 @@ def login():
             session["username"] = username
 
             user = usr_handler.get_user(user_id)
+            if user is None:
+                abort(500)
             session["user_role"] = user["user_role"]
             session["csrf_token"] = secrets.token_hex(16)
 
@@ -429,9 +461,11 @@ def login():
             filled = {"username": username}
             return render_template("login.html", filled=filled, next_page=next_page)
 
+    abort(405)
+
 
 @app.route("/logout")
-def logout():
+def logout() -> ResponseReturnValue:
     require_login()
 
     del session["user_id"]
@@ -443,7 +477,7 @@ def logout():
 
 
 @app.route("/search")
-def search():
+def search() -> ResponseReturnValue:
     # strip empty parameters
     params = {k: v for k, v in request.args.items() if v.strip()}
     if len(params) != len(request.args):
@@ -478,7 +512,7 @@ def search():
 
 
 @app.route("/user/<username>")
-def user(username):
+def user(username: str) -> ResponseReturnValue:
     # get the user_id
     users = usr_handler.get_users(username=username)
 
@@ -512,7 +546,7 @@ def user(username):
 
 
 @app.route("/user/<username>/profile-picture")
-def user_profile_picture(username):
+def user_profile_picture(username: str) -> ResponseReturnValue:
     users = usr_handler.get_users(username=username)
 
     if not users:
@@ -529,7 +563,7 @@ def user_profile_picture(username):
 
 
 @app.route("/user/<username>/change-profile-picture", methods=["GET", "POST"])
-def change_profile_picture(username):
+def change_profile_picture(username: str) -> ResponseReturnValue:
     require_login()
 
     if request.method == "GET":
@@ -558,7 +592,9 @@ def change_profile_picture(username):
             flash("Image is too large", "error")
             return redirect(url_for("change_profile_picture", username=username))
 
-        usr_handler.set_profile_picture(session.get("user_id"), profile_picture)
+        usr_handler.set_profile_picture(current_user_id(), profile_picture)
 
         flash("Profile picture added succesfully", "success")
         return redirect(url_for("user", username=username))
+
+    abort(405)

@@ -8,7 +8,7 @@ from time import time
 BASE_DIR = Path(__file__).parent
 
 
-def run_schema(cursor):
+def run_schema(cursor: sqlite3.Cursor) -> str:
     start_time = time()
 
     with open(BASE_DIR / "schema.sql", "r") as f:
@@ -20,7 +20,7 @@ def run_schema(cursor):
     return f"[ OK ] schema.sql ({result:.3f}s)"
 
 
-def run_index(cursor):
+def run_index(cursor: sqlite3.Cursor) -> str:
     start_time = time()
 
     with open(BASE_DIR / "index.sql", "r") as f:
@@ -32,7 +32,7 @@ def run_index(cursor):
     return f"[ OK ] index.sql ({result:.3f}s)"
 
 
-def run_init(cursor):
+def run_init(cursor: sqlite3.Cursor) -> str:
     start_time = time()
 
     with open(BASE_DIR / "init.sql", "r") as f:
@@ -44,7 +44,7 @@ def run_init(cursor):
     return f"[ OK ] init.sql ({result:.3f}s)"
 
 
-def give_badmin(cursor):
+def give_badmin(cursor: sqlite3.Cursor) -> str:
     start_time = time()
     sql = """UPDATE users
                 SET user_role = 'badmin'"""
@@ -56,12 +56,12 @@ def give_badmin(cursor):
 
 
 def create_test_data(
-    cursor,
-    user_count=10**3,
-    reservation_count=10**5,
-    comment_count=10**6,
-    enrollment_count=10**5,
-):
+    cursor: sqlite3.Cursor,
+    user_count: int = 10**3,
+    reservation_count: int = 10**5,
+    comment_count: int = 10**6,
+    enrollment_count: int = 10**5,
+) -> str:
     start_time = time()
 
     epoch = datetime(1970, 1, 1)
@@ -147,7 +147,7 @@ def create_test_data(
     return f"[ OK ] testdata ({result:.3f}s)"
 
 
-def show_performance_results():
+def show_performance_results() -> None:
     performance_results = """
 App tested with the following datasets
 User count: 10 ** 3
@@ -171,7 +171,7 @@ Search: 100ms with all parameters"""
     print(performance_results)
 
 
-def init_cli():
+def init_cli() -> None:
     action = input(">>> ")
 
     con = sqlite3.connect("database.db")
@@ -205,7 +205,7 @@ def init_cli():
     con.close()
 
 
-def main():
+def main() -> None:
     prompt = """
 --- App init tool ---
 [1] Run schema.sql (DROPS EVERYTHING)
