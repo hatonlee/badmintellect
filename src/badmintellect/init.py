@@ -7,6 +7,7 @@ from time import time
 
 BASE_DIR = Path(__file__).parent
 
+
 def run_schema(cursor):
     start_time = time()
 
@@ -17,6 +18,7 @@ def run_schema(cursor):
     end_time = time()
     result = end_time - start_time
     return f"[ OK ] schema.sql ({result:.3f}s)"
+
 
 def run_index(cursor):
     start_time = time()
@@ -29,6 +31,7 @@ def run_index(cursor):
     result = end_time - start_time
     return f"[ OK ] index.sql ({result:.3f}s)"
 
+
 def run_init(cursor):
     start_time = time()
 
@@ -40,6 +43,7 @@ def run_init(cursor):
     result = end_time - start_time
     return f"[ OK ] init.sql ({result:.3f}s)"
 
+
 def give_badmin(cursor):
     start_time = time()
     sql = """UPDATE users
@@ -50,7 +54,14 @@ def give_badmin(cursor):
     result = end_time - start_time
     return f"[ OK ] badmin ({result:.3f}s)"
 
-def create_test_data(cursor, user_count=10**3, reservation_count=10**5, comment_count=10**6, enrollment_count=10**5):
+
+def create_test_data(
+    cursor,
+    user_count=10**3,
+    reservation_count=10**5,
+    comment_count=10**6,
+    enrollment_count=10**5,
+):
     start_time = time()
 
     epoch = datetime(1970, 1, 1)
@@ -61,7 +72,7 @@ def create_test_data(cursor, user_count=10**3, reservation_count=10**5, comment_
                  VALUES (?)"""
 
         for i in range(1, user_count + 1):
-                cursor.execute(sql, (f"user{i}",))
+            cursor.execute(sql, (f"user{i}",))
 
         sql = """INSERT INTO reservations (user_id, title, place, date, time, duration)
                  VALUES (?, ?, ?, ?, ?, ?)"""
@@ -82,7 +93,17 @@ def create_test_data(cursor, user_count=10**3, reservation_count=10**5, comment_
             minutes = minutes - 60 * hours
             random_duration = f"{hours:02}:{minutes:02}"
 
-            cursor.execute(sql, (random.randint(1, user_count), f"Title {i}", "Random place", random_date, random_time, random_duration))
+            cursor.execute(
+                sql,
+                (
+                    random.randint(1, user_count),
+                    f"Title {i}",
+                    "Random place",
+                    random_date,
+                    random_time,
+                    random_duration,
+                ),
+            )
 
         sql = """INSERT INTO comments (user_id, reservation_id, comment, post_time)
                  VALUES (?, ?, ?, ?)"""
@@ -90,15 +111,31 @@ def create_test_data(cursor, user_count=10**3, reservation_count=10**5, comment_
         for _ in range(1, comment_count + 1):
             # random datetime
             seconds = random.randint(0, int((now - epoch).total_seconds()))
-            random_datetime = (epoch + timedelta(seconds=seconds)).strftime("%Y-%m-%d %H:%M")
-            cursor.execute(sql, (random.randint(1, user_count), random.randint(1, reservation_count), f"Comment {i}", random_datetime))
+            random_datetime = (epoch + timedelta(seconds=seconds)).strftime(
+                "%Y-%m-%d %H:%M"
+            )
+            cursor.execute(
+                sql,
+                (
+                    random.randint(1, user_count),
+                    random.randint(1, reservation_count),
+                    f"Comment {i}",
+                    random_datetime,
+                ),
+            )
 
         sql = """INSERT INTO enrollments (user_id, reservation_id)
                       VALUES (?, ?)"""
 
         for i in range(1, enrollment_count + 1):
             try:
-                cursor.execute(sql, (random.randint(1, user_count), random.randint(1, reservation_count)))
+                cursor.execute(
+                    sql,
+                    (
+                        random.randint(1, user_count),
+                        random.randint(1, reservation_count),
+                    ),
+                )
             except sqlite3.IntegrityError:
                 pass
 
@@ -108,6 +145,7 @@ def create_test_data(cursor, user_count=10**3, reservation_count=10**5, comment_
     end_time = time()
     result = end_time - start_time
     return f"[ OK ] testdata ({result:.3f}s)"
+
 
 def show_performance_results():
     performance_results = """
@@ -131,6 +169,7 @@ Front page: 60ms
 Search: 100ms with all parameters"""
 
     print(performance_results)
+
 
 def init_cli():
     action = input(">>> ")
@@ -165,6 +204,7 @@ def init_cli():
     con.commit()
     con.close()
 
+
 def main():
     prompt = """
 --- App init tool ---
@@ -180,6 +220,7 @@ def main():
     print(prompt)
     while True:
         init_cli()
+
 
 if __name__ == "__main__":
     main()

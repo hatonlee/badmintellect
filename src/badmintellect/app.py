@@ -20,21 +20,26 @@ from . import com_handler, config, enr_handler, res_handler, tag_handler, usr_ha
 app = Flask(__name__)
 app.secret_key = config.secret_key
 
+
 def require_login():
     if not session.get("user_id"):
         abort(401)
+
 
 def check_csrf():
     if request.form.get("csrf_token") != session.get("csrf_token"):
         abort(403)
 
+
 def require_owner(user_id):
     if user_id != session.get("user_id"):
         abort(403)
 
+
 def require_modify(user_id):
     if int(user_id) != session.get("user_id") and session.get("user_role") != "badmin":
         abort(403)
+
 
 def is_valid_date(date):
     try:
@@ -43,6 +48,7 @@ def is_valid_date(date):
     except ValueError:
         return False
 
+
 def is_valid_time(time):
     try:
         datetime.strptime(time, "%H:%M")
@@ -50,12 +56,14 @@ def is_valid_time(time):
     except ValueError:
         return False
 
+
 def parse_duration(duration):
     try:
         hours, minutes = map(int, duration.split(":"))
         return timedelta(hours=hours, minutes=minutes)
-    except (ValueError, TypeError):
+    except ValueError, TypeError:
         return None
+
 
 def is_valid_duration(duration, min_duration="00:30", max_duration="06:00"):
     duration = parse_duration(duration)
@@ -66,11 +74,13 @@ def is_valid_duration(duration, min_duration="00:30", max_duration="06:00"):
     max_duration = parse_duration(max_duration)
     return min_duration <= duration <= max_duration
 
+
 @app.template_filter()
 def show_newlines(content):
     content = str(markupsafe.escape(content))
     content = content.replace("\n", "<br>")
     return markupsafe.Markup(content)
+
 
 @app.route("/")
 def index():
@@ -85,7 +95,10 @@ def index():
     page = max(1, min(page_count, page))
 
     reservations = res_handler.get_reservations(page=page, page_size=page_size)
-    return render_template("index.html", reservations=reservations, page=page, page_count=page_count)
+    return render_template(
+        "index.html", reservations=reservations, page=page, page_count=page_count
+    )
+
 
 @app.route("/reservation/<int:reservation_id>")
 def reservation(reservation_id):
@@ -109,11 +122,18 @@ def reservation(reservation_id):
         page = max(1, min(page_count, page))
 
         params["tags"] = tag_handler.get_tags(reservation_id)
-        params["comments"] = com_handler.get_comments(reservation_id, page=page, page_size=page_size)
-        params["is_enrolled"] = enr_handler.is_enrolled(session.get("user_id"), reservation_id)
+        params["comments"] = com_handler.get_comments(
+            reservation_id, page=page, page_size=page_size
+        )
+        params["is_enrolled"] = enr_handler.is_enrolled(
+            session.get("user_id"), reservation_id
+        )
         params["enrolled_count"] = enr_handler.enrolled_users_count(reservation_id)
 
-        return render_template("reservation.html", page=page, page_count=page_count, **params)
+        return render_template(
+            "reservation.html", page=page, page_count=page_count, **params
+        )
+
 
 @app.route("/reservation/<int:reservation_id>/add-comment", methods=["POST"])
 def add_comment(reservation_id):
@@ -131,6 +151,7 @@ def add_comment(reservation_id):
 
     return redirect(url_for("reservation", reservation_id=reservation_id))
 
+
 @app.route("/reservation/<int:reservation_id>/remove-comment", methods=["POST"])
 def remove_comment(reservation_id):
     require_login()
@@ -143,6 +164,7 @@ def remove_comment(reservation_id):
 
     com_handler.remove_comment(comment_id)
     return redirect(url_for("reservation", reservation_id=reservation_id))
+
 
 @app.route("/reservation/<int:reservation_id>/enroll", methods=["POST"])
 def enroll(reservation_id):
@@ -161,6 +183,7 @@ def enroll(reservation_id):
         flash("Unenrolled succesfully", "success")
 
     return redirect(url_for("reservation", reservation_id=reservation_id))
+
 
 @app.route("/new-reservation", methods=["GET", "POST"])
 def new_reservation():
@@ -182,11 +205,22 @@ def new_reservation():
         tags = request.form.getlist("tag")
 
         # input validation
-        if (not all((params["title"], params["place"], params["date"], params["time"], params["duration"])) or
-            len(params["title"]) > 50 or len(params["place"]) > 50 or
-            not is_valid_date(params["date"]) or
-            not is_valid_time(params["time"]) or
-            not is_valid_duration(params["duration"])):
+        if (
+            not all(
+                (
+                    params["title"],
+                    params["place"],
+                    params["date"],
+                    params["time"],
+                    params["duration"],
+                )
+            )
+            or len(params["title"]) > 50
+            or len(params["place"]) > 50
+            or not is_valid_date(params["date"])
+            or not is_valid_time(params["time"])
+            or not is_valid_duration(params["duration"])
+        ):
             abort(400)
 
         # strip whitespace
@@ -203,6 +237,7 @@ def new_reservation():
         flash("Reservation added succesfully", "success")
         return redirect(url_for("reservation", reservation_id=reservation_id))
 
+
 @app.route("/reservation/<int:reservation_id>/edit", methods=["GET", "POST"])
 def edit_reservation(reservation_id):
     require_login()
@@ -216,7 +251,12 @@ def edit_reservation(reservation_id):
     if request.method == "GET":
         allowed_tags = tag_handler.get_allowed_tags()
         tags = tag_handler.get_tags(reservation_id)
-        return render_template("edit-reservation.html", reservation=reservation, allowed_tags=allowed_tags, tags=tags)
+        return render_template(
+            "edit-reservation.html",
+            reservation=reservation,
+            allowed_tags=allowed_tags,
+            tags=tags,
+        )
 
     if request.method == "POST":
         check_csrf()
@@ -230,11 +270,22 @@ def edit_reservation(reservation_id):
         tags = request.form.getlist("tag")
 
         # input validation
-        if (not all((params["title"], params["place"], params["date"], params["time"], params["duration"])) or
-            len(params["title"]) > 50 or len(params["place"]) > 50 or
-            not is_valid_date(params["date"]) or
-            not is_valid_time(params["time"]) or
-            not is_valid_duration(params["duration"])):
+        if (
+            not all(
+                (
+                    params["title"],
+                    params["place"],
+                    params["date"],
+                    params["time"],
+                    params["duration"],
+                )
+            )
+            or len(params["title"]) > 50
+            or len(params["place"]) > 50
+            or not is_valid_date(params["date"])
+            or not is_valid_time(params["time"])
+            or not is_valid_duration(params["duration"])
+        ):
             abort(400)
 
         params["title"] = params["title"].strip()
@@ -250,6 +301,7 @@ def edit_reservation(reservation_id):
 
         flash("Reservation edited succesfully", "success")
         return redirect(url_for("reservation", reservation_id=reservation_id))
+
 
 @app.route("/reservation/<int:reservation_id>/remove", methods=["GET", "POST"])
 def remove_reservation(reservation_id):
@@ -281,6 +333,7 @@ def remove_reservation(reservation_id):
             flash("Reservation not removed", "error")
             return redirect(url_for("reservation", reservation_id=reservation_id))
 
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "GET":
@@ -309,12 +362,14 @@ def register():
             return render_template("register.html", filled=filled, next_page=next_page)
 
         # input validation
-        if (not username or
-            not password_1 or
-            len(username) > 25 or
-            len(username) < 5 or
-            len(password_1) < 8 or
-            len(password_1) > 64):
+        if (
+            not username
+            or not password_1
+            or len(username) > 25
+            or len(username) < 5
+            or len(password_1) < 8
+            or len(password_1) > 64
+        ):
             abort(400)
 
         # check if the username already exists
@@ -337,6 +392,7 @@ def register():
             return redirect(url_for("user", username=username))
         else:
             return redirect(next_page)
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -373,6 +429,7 @@ def login():
             filled = {"username": username}
             return render_template("login.html", filled=filled, next_page=next_page)
 
+
 @app.route("/logout")
 def logout():
     require_login()
@@ -384,6 +441,7 @@ def logout():
     flash("Logout succesful", "success")
     return redirect("/")
 
+
 @app.route("/search")
 def search():
     # strip empty parameters
@@ -392,8 +450,8 @@ def search():
         return redirect(url_for("search", **params))
 
     # fuzzy text parameters
-    params["title"] = f"%{params["title"]}%" if "title" in params else ""
-    params["place"] = f"%{params["place"]}%" if "place" in params else ""
+    params["title"] = f"%{params['title']}%" if "title" in params else ""
+    params["place"] = f"%{params['place']}%" if "place" in params else ""
     params.pop("page", None)
 
     # pagination
@@ -407,8 +465,17 @@ def search():
     page = max(1, min(page_count, page))
 
     # search
-    reservations = res_handler.get_reservations(page=page, page_size=page_size, params=params)
-    return render_template("search.html", reservations=reservations, page=page, page_count=page_count, params=params)
+    reservations = res_handler.get_reservations(
+        page=page, page_size=page_size, params=params
+    )
+    return render_template(
+        "search.html",
+        reservations=reservations,
+        page=page,
+        page_count=page_count,
+        params=params,
+    )
+
 
 @app.route("/user/<username>")
 def user(username):
@@ -432,8 +499,17 @@ def user(username):
     except ValueError:
         abort(400)
 
-    reservations = res_handler.get_reservations(user_id=user["user_id"], page=page, page_size=page_size)
-    return render_template("user.html", user=user, reservations=reservations, page=page, page_count=page_count)
+    reservations = res_handler.get_reservations(
+        user_id=user["user_id"], page=page, page_size=page_size
+    )
+    return render_template(
+        "user.html",
+        user=user,
+        reservations=reservations,
+        page=page,
+        page_count=page_count,
+    )
+
 
 @app.route("/user/<username>/profile-picture")
 def user_profile_picture(username):
@@ -451,7 +527,8 @@ def user_profile_picture(username):
     response.headers.set("Content-Type", "image/jpeg")
     return response
 
-@app.route("/user/<username>/change-profile-picture", methods = ["GET", "POST"])
+
+@app.route("/user/<username>/change-profile-picture", methods=["GET", "POST"])
 def change_profile_picture(username):
     require_login()
 

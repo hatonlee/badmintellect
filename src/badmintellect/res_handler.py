@@ -48,6 +48,7 @@ def get_reservations(page=1, page_size=25, params=None, **kwargs):
     result = db.query(sql, combined)
     return result if result else None
 
+
 def reservation_count(params=None, **kwargs):
     combined = {}
     if params:
@@ -84,6 +85,7 @@ def reservation_count(params=None, **kwargs):
     result = db.query(sql, combined)
     return int(result[0][0]) if result else None
 
+
 def get_reservation(reservation_id):
     sql = """SELECT r.reservation_id, r.user_id, r.title, r.place, r.date, r.time, r.duration, u.username
                FROM reservations AS r
@@ -92,6 +94,7 @@ def get_reservation(reservation_id):
 
     result = db.query(sql, (reservation_id,))
     return result[0] if result else None
+
 
 def add_reservation(params=None, **kwargs):
     combined = {}
@@ -108,6 +111,7 @@ def add_reservation(params=None, **kwargs):
     reservation_id = db.last_insert_id()
     return reservation_id
 
+
 def update_reservation(params=None, **kwargs):
     combined = {}
     if params:
@@ -121,6 +125,7 @@ def update_reservation(params=None, **kwargs):
               WHERE reservation_id = ?"""
 
     db.execute(sql, combined)
+
 
 def remove_reservation(reservation_id):
     sql = """DELETE FROM reservations
