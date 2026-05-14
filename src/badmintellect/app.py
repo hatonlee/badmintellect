@@ -215,8 +215,8 @@ def new_reservation():
                     params["duration"],
                 )
             )
-            or len(params["title"]) > 50
-            or len(params["place"]) > 50
+            or len(str(params["title"])) > 50
+            or len(str(params["place"])) > 50
             or not is_valid_date(params["date"])
             or not is_valid_time(params["time"])
             or not is_valid_duration(params["duration"])
@@ -224,8 +224,8 @@ def new_reservation():
             abort(400)
 
         # strip whitespace
-        params["title"] = params["title"].strip()
-        params["place"] = params["place"].strip()
+        params["title"] = str(params["title"]).strip()
+        params["place"] = str(params["place"]).strip()
 
         reservation_id = res_handler.add_reservation(params=params)
 
@@ -447,7 +447,7 @@ def search():
     # strip empty parameters
     params = {k: v for k, v in request.args.items() if v.strip()}
     if len(params) != len(request.args):
-        return redirect(url_for("search", **params))
+        return redirect(url_for("search", values=params))
 
     # fuzzy text parameters
     params["title"] = f"%{params['title']}%" if "title" in params else ""
@@ -549,7 +549,7 @@ def change_profile_picture(username):
             flash("No image file", "error")
             return redirect(url_for("change_profile_picture", username=username))
 
-        if not image_file.filename.endswith(".jpg"):
+        if not str(image_file.filename).endswith(".jpg"):
             flash("Wrong filetype", "error")
             return redirect(url_for("change_profile_picture", username=username))
 
