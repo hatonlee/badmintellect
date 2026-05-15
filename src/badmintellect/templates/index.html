@@ -1,25 +1,37 @@
 {% extends "layout.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/style/index.css">
-<link rel="stylesheet" href="/static/style/reservation-list.css">
+  <link rel="stylesheet" href="/static/style/index.css" />
+  <link rel="stylesheet" href="/static/style/reservation-list.css" />
 {% endblock %}
 
 {% block title %}badmintellect{% endblock %}
 
 {% block content %}
-    <h2 class="reservations-title">Reservations</h2>
-    {% if reservations %}
-    {% include "reservation-list.html"%}
-    {% else %}
+  <h2 class="reservations-title">Reservations</h2>
+  {% if reservations %}
+    {% include "reservation-list.html" %}
+  {% else %}
     <p class="no-reservations">No reservations</p>
-    {% endif %}
+  {% endif %}
 
-    {% if reservations %}
+  {% if reservations %}
     <form action="/" class="page-navigation">
-        <button class="navigation-button" name=page value="{{ [1, page - 1] | max }}">&lt;&lt;</button>
-        <p class="current-page">{{ page }} / {{ page_count }}</p>
-        <button class="navigation-button" name=page value="{{ [page_count, page + 1] | min }}">&gt;&gt;</button>
+      <button
+        class="navigation-button"
+        name="page"
+        value="{{ [1, page - 1] | max }}"
+      >
+        &lt;&lt;
+      </button>
+      <p class="current-page">{{ page }} / {{ page_count }}</p>
+      <button
+        class="navigation-button"
+        name="page"
+        value="{{ [page_count, page + 1] | min }}"
+      >
+        &gt;&gt;
+      </button>
     </form>
-    {% endif %}
+  {% endif %}
 {% endblock %}

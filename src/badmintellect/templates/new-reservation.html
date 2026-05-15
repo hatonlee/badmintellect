@@ -1,69 +1,86 @@
 {% extends "layout.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/style/new-reservation.css">
+  <link rel="stylesheet" href="/static/style/new-reservation.css" />
 {% endblock %}
 
 {% block title %}New reservation{% endblock %}
 
 {% block content %}
-<h2 class="new-reservation-title">Create a new reservation</h2>
+  <h2 class="new-reservation-title">Create a new reservation</h2>
 
-<form class="new-reservation-form" action="/new-reservation" method="post">
+  <form class="new-reservation-form" action="/new-reservation" method="post">
     <div class="main-inputs-container">
-        <label class="main-input-label">
-            <p class="main-input-label-text">Title</p>
-            <input class="main-input" type="text" name="title" required maxlength="50"/>
-        </label>
-        <label class="main-input-label">
-            <p class="main-input-label-text">Place</p>
-            <input class="main-input" type="text" name="place" required maxlength="50"/>
-        </label>
-        <label class="main-input-label">
-            <p class="main-input-label-text">Date</p>
-            <input class="main-input" type="date" name="date" required/>
-        </label>
-        <label class="main-input-label">
-            <p class="main-input-label-text">Time</p>
-            <input class="main-input" type="time" name="time" required/>
-        </label>
-        <label class="main-input-label">
-            <p class="main-input-label-text">Duration</p>
-            <select class="main-input" name="duration">
-                <option value="00:30">30 minutes</option>
-                <option value="01:00">1 hour</option>
-                <option value="01:30">1 hour 30 minutes</option>
-                <option value="02:00">2 hours</option>
-                <option value="02:30">2 hours 30 minutes</option>
-                <option value="03:00">3 hours</option>
-                <option value="03:30">3 hours 30 minutes</option>
-                <option value="04:00">4 hours</option>
-                <option value="04:30">4 hours 30 minutes</option>
-                <option value="05:00">5 hours</option>
-                <option value="05:30">5 hours 30 minutes</option>
-                <option value="06:00">6 hours</option>
-            </select>
-        </label>
+      <label class="main-input-label">
+        <p class="main-input-label-text">Title</p>
+        <input
+          class="main-input"
+          type="text"
+          name="title"
+          required
+          maxlength="50"
+        />
+      </label>
+      <label class="main-input-label">
+        <p class="main-input-label-text">Place</p>
+        <input
+          class="main-input"
+          type="text"
+          name="place"
+          required
+          maxlength="50"
+        />
+      </label>
+      <label class="main-input-label">
+        <p class="main-input-label-text">Date</p>
+        <input class="main-input" type="date" name="date" required />
+      </label>
+      <label class="main-input-label">
+        <p class="main-input-label-text">Time</p>
+        <input class="main-input" type="time" name="time" required />
+      </label>
+      <label class="main-input-label">
+        <p class="main-input-label-text">Duration</p>
+        <select class="main-input" name="duration">
+          <option value="00:30">30 minutes</option>
+          <option value="01:00">1 hour</option>
+          <option value="01:30">1 hour 30 minutes</option>
+          <option value="02:00">2 hours</option>
+          <option value="02:30">2 hours 30 minutes</option>
+          <option value="03:00">3 hours</option>
+          <option value="03:30">3 hours 30 minutes</option>
+          <option value="04:00">4 hours</option>
+          <option value="04:30">4 hours 30 minutes</option>
+          <option value="05:00">5 hours</option>
+          <option value="05:30">5 hours 30 minutes</option>
+          <option value="06:00">6 hours</option>
+        </select>
+      </label>
     </div>
 
     <h2 class="tags-title">Tags</h2>
     {% if allowed_tags %}
-    <div class="tags-container">
+      <div class="tags-container">
         {% for tag in allowed_tags %}
-        <label class="tag-container">
+          <label class="tag-container">
             {{ tag.tag }}
-            <input class="checkbox" type="checkbox" name="tag" value="{{ tag.tag }}">
+            <input
+              class="checkbox"
+              type="checkbox"
+              name="tag"
+              value="{{ tag.tag }}"
+            />
             <span class="checkmark-container">
-                <span class="checkmark material-symbols-outlined">check</span>
+              <span class="checkmark material-symbols-outlined">check</span>
             </span>
-        </label>
+          </label>
         {% endfor %}
-    </div>
+      </div>
     {% else %}
-    <p class="no-tags">No tags available</p>
+      <p class="no-tags">No tags available</p>
     {% endif %}
 
-    <input class="button-small submit-button" type="submit" value="Submit"/>
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
-</form>
+    <input class="button-small submit-button" type="submit" value="Submit" />
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+  </form>
 {% endblock %}

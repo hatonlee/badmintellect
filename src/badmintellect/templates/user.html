@@ -1,53 +1,80 @@
 {% extends "layout.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/style/reservation-list.css">
-<link rel="stylesheet" href="/static/style/user.css">
+  <link rel="stylesheet" href="/static/style/reservation-list.css" />
+  <link rel="stylesheet" href="/static/style/user.css" />
 {% endblock %}
 
-{% block title %}User {{user.username}}{% endblock %}
+{% block title %}User {{ user.username }}{% endblock %}
 
 {% block content %}
-<div class="profile-banner">
+  <div class="profile-banner">
     <div class="profile-picture-container">
-        {% if user.has_profile_picture %}
-        <img class="profile-picture" src="/user/{{ user.username }}/profile-picture" alt="Profile picture" height="64" width="64">
-        {% else %}
-        <img class="profile-picture" src="/static/images/default-profile-picture.jpg" alt="Profile picture" height="64" width="64">
-        {% endif %}
+      {% if user.has_profile_picture %}
+        <img
+          class="profile-picture"
+          src="/user/{{ user.username }}/profile-picture"
+          alt="Profile picture"
+          height="64"
+          width="64"
+        />
+      {% else %}
+        <img
+          class="profile-picture"
+          src="/static/images/default-profile-picture.jpg"
+          alt="Profile picture"
+          height="64"
+          width="64"
+        />
+      {% endif %}
     </div>
 
     <div class="username-container">
-        <h2 class="username">{{ user.username }}</h2>
-        {% if user.user_role == 'badmin' %}
+      <h2 class="username">{{ user.username }}</h2>
+      {% if user.user_role == 'badmin' %}
         <p class="badmin-badge title-font">BADMIN</p>
-        {% endif %}
+      {% endif %}
     </div>
 
     <p class="reservation-count">
-        {{ user.reservation_count }}
-        {% if user.reservation_count == 1 %} reservation{% else %} reservations{% endif %}
+      {{ user.reservation_count }}
+      {% if user.reservation_count == 1 %}reservation{% else %}reservations{% endif %}
     </p>
 
     {% if user.user_id == session.user_id %}
-    <a class="button-icon edit-link" href="/user/{{ user.username }}/change-profile-picture">
+      <a
+        class="button-icon edit-link"
+        href="/user/{{ user.username }}/change-profile-picture"
+      >
         <span class="edit-icon material-symbols-outlined">edit</span>
-    </a>
+      </a>
     {% endif %}
-</div>
+  </div>
 
-<h2 class="reservations-title">Reservations</h2>
-{% if reservations %}
-{% include "reservation-list.html" %}
-{% else %}
-<p class="no-reservations">This user has no reservations</p>
-{% endif %}
+  <h2 class="reservations-title">Reservations</h2>
+  {% if reservations %}
+    {% include "reservation-list.html" %}
+  {% else %}
+    <p class="no-reservations">This user has no reservations</p>
+  {% endif %}
 
-{% if reservations %}
-<form class="page-navigation" action="/user/{{ user.username }}">
-    <button class="navigation-button" name=page value="{{ [1, page - 1] | max }}">&lt;&lt;</button>
-    <p class="current-page">{{ page }} / {{ page_count }}</p>
-    <button class="navigation-button" name=page value="{{ [page_count, page + 1] | min }}">&gt;&gt;</button>
-</form>
-{% endif %}
+  {% if reservations %}
+    <form class="page-navigation" action="/user/{{ user.username }}">
+      <button
+        class="navigation-button"
+        name="page"
+        value="{{ [1, page - 1] | max }}"
+      >
+        &lt;&lt;
+      </button>
+      <p class="current-page">{{ page }} / {{ page_count }}</p>
+      <button
+        class="navigation-button"
+        name="page"
+        value="{{ [page_count, page + 1] | min }}"
+      >
+        &gt;&gt;
+      </button>
+    </form>
+  {% endif %}
 {% endblock %}

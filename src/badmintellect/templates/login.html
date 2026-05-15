@@ -1,27 +1,40 @@
 {% extends "layout.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/style/login.css">
+  <link rel="stylesheet" href="/static/style/login.css" />
 {% endblock %}
 
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<h2 class="login-title">Login</h2>
+  <h2 class="login-title">Login</h2>
 
-<form class="login-form" action="/login" method="post">
+  <form class="login-form" action="/login" method="post">
     <div class="main-info-container">
-        <label class="login-form-label">
-            <span class="label-text">Username</span>
-            <input type="text" minlength="5" maxlength="25" name="username" value="{{ filled.username }}" required/>
-        </label>
-        <label class="login-form-label">
-            <span class="label-text">Password</span>
-            <input type="password" minlength="8" maxlength="64" name="password" required/>
-        </label>
+      <label class="login-form-label">
+        <span class="label-text">Username</span>
+        <input
+          type="text"
+          minlength="5"
+          maxlength="25"
+          name="username"
+          value="{{ filled.username }}"
+          required
+        />
+      </label>
+      <label class="login-form-label">
+        <span class="label-text">Password</span>
+        <input
+          type="password"
+          minlength="8"
+          maxlength="64"
+          name="password"
+          required
+        />
+      </label>
     </div>
-    <input class="button-small submit-button" type="submit" value="Login"/>
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
+    <input class="button-small submit-button" type="submit" value="Login" />
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
     <input type="hidden" name="next_page" value="{{ next_page }}" />
-</form>
+  </form>
 {% endblock %}

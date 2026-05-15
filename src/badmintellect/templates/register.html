@@ -1,31 +1,53 @@
 {% extends "layout.html" %}
 
 {% block head %}
-<link rel="stylesheet" href="/static/style/register.css">
+  <link rel="stylesheet" href="/static/style/register.css" />
 {% endblock %}
 
 {% block title %}Register{% endblock %}
 
 {% block content %}
-<h2 class="register-title">Register</h2>
+  <h2 class="register-title">Register</h2>
 
-<form class="register-form" action="/register" method="post">
+  <form class="register-form" action="/register" method="post">
     <div class="main-info-container">
-        <label class="register-form-label">
-            <span class="label-text">Username</span>
-            <input type="text" name="username" minlength="5" maxlength="25" placeholder="5-25 characters" value="{{ filled.username }}" required/>
-        </label>
-        <label class="register-form-label">
-            <span class="label-text">Password</span>
-            <input type="password" name="password_1" minlength="8" maxlength="64" placeholder="8-64 characters" required/>
-        </label>
-        <label class="register-form-label">
-            <span class="label-text">Password again</span>
-            <input type="password" name="password_2" minlength="8" maxlength="64" placeholder="8-64 characters" required/>
-        </label>
+      <label class="register-form-label">
+        <span class="label-text">Username</span>
+        <input
+          type="text"
+          name="username"
+          minlength="5"
+          maxlength="25"
+          placeholder="5-25 characters"
+          value="{{ filled.username }}"
+          required
+        />
+      </label>
+      <label class="register-form-label">
+        <span class="label-text">Password</span>
+        <input
+          type="password"
+          name="password_1"
+          minlength="8"
+          maxlength="64"
+          placeholder="8-64 characters"
+          required
+        />
+      </label>
+      <label class="register-form-label">
+        <span class="label-text">Password again</span>
+        <input
+          type="password"
+          name="password_2"
+          minlength="8"
+          maxlength="64"
+          placeholder="8-64 characters"
+          required
+        />
+      </label>
     </div>
-    <input class="button-small submit-button" type="submit" value="Register"/>
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}"/>
-    <input type="hidden" name="next_page" value="{{ next_page }}"/>
-</form>
+    <input class="button-small submit-button" type="submit" value="Register" />
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+    <input type="hidden" name="next_page" value="{{ next_page }}" />
+  </form>
 {% endblock %}
