@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "oxfmt": "^0.49.0",
+    "prettier": "^3.8.3",
+    "prettier-plugin-jinja-template": "^2.2.0"
+  },
+  "scripts": {
+    "format": "npm run format:oxfmt && npm run format:prettier",
+    "format:oxfmt": "oxfmt --config .oxfmtrc.json",
+    "format:prettier": "prettier \"src/badmintellect/templates/**/*.html\" --write --config .prettierrc.json"
+  }
+}
